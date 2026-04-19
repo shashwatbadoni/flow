@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="theme-color" content="#0d0f1a"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Flow"/>
+<title>Flow — Personal Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d0f1a;--glass:rgba(255,255,255,0.06);--gb:rgba(255,255,255,0.12);
+  --a:#7c6ef7;--a2:#a78bfa;--a3:#38bdf8;
+  --ok:#34d399;--warn:#fbbf24;--err:#f87171;--gold:#f59e0b;--gold2:#f97316;
+  --t1:#f0f2ff;--t2:#a0a8c8;--t3:#5a6080;--r:14px;--rs:8px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
+.orbs{position:fixed;inset:0;pointer-events:none;z-index:0}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.18}
+.o1{width:520px;height:520px;background:#7c6ef7;top:-120px;left:-100px}
+.o2{width:400px;height:400px;background:#38bdf8;bottom:-80px;right:-60px}
+.o3{width:280px;height:280px;background:#a78bfa;top:40%;left:60%}
+.app{position:relative;z-index:1;min-height:100vh}
+
+/* LOGIN */
+#ls{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.lc{background:var(--glass);backdrop-filter:blur(24px);border:1px solid var(--gb);border-radius:24px;padding:48px 40px;text-align:center;max-width:380px;width:90%}
+.ll{font-family:'Syne',sans-serif;font-size:36px;font-weight:700;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.ls2{font-size:14px;color:var(--t2);margin-bottom:32px;line-height:1.6}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:12px;background:#fff;color:#1a1a2e;border:none;border-radius:10px;padding:13px 24px;font-size:15px;font-weight:600;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;transition:opacity 0.2s}
+.gbtn:hover{opacity:0.9}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(13,15,26,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--gb);position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap}
+.nl{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ntabs{display:flex;gap:3px;background:rgba(0,0,0,0.3);border-radius:10px;padding:4px}
+.ntab{padding:6px 14px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;color:var(--t2);transition:all 0.2s;border:none;background:transparent;white-space:nowrap}
+.ntab.on{background:rgba(124,110,247,0.25);color:var(--a2);border:1px solid rgba(124,110,247,0.3)}
+.nr{display:flex;align-items:center;gap:10px}
+.av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7c6ef7,#38bdf8);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;overflow:hidden;flex-shrink:0}
+.av img{width:100%;height:100%;object-fit:cover}
+.sob{background:rgba(255,255,255,0.07);border:1px solid var(--gb);border-radius:8px;padding:5px 11px;color:var(--t2);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.sd{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:4px;vertical-align:middle}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.syn{animation:pulse 1s infinite}
+
+/* PAGES */
+.pg{display:none;padding:24px 28px}
+.pg.on{display:block}
+@media(max-width:768px){.pg{padding:14px 12px}}
+.tc{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+@media(max-width:900px){.tc{grid-template-columns:1fr}}
+
+/* GLASS */
+.g{background:var(--glass);backdrop-filter:blur(24px);border:1px solid var(--gb);border-radius:var(--r)}
+.pp{padding:20px}
+.sl{font-family:'Syne',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:12px}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.es{text-align:center;color:var(--t3);font-size:13px;padding:20px 0}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e2340;border:1px solid var(--gb);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--t1);z-index:9999;opacity:0;transition:all 0.3s ease;pointer-events:none;white-space:nowrap;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(52,211,153,0.4);color:var(--ok)}
+.toast.err{border-color:rgba(248,113,113,0.4);color:var(--err)}
+
+/* CONFETTI */
+.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9998;overflow:hidden}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 3s ease-in forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* INPUTS */
+.ti{background:rgba(0,0,0,0.3);border:1px solid var(--gb);border-radius:var(--rs);padding:9px 14px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:14px;outline:none}
+.ti::placeholder{color:var(--t3)}
+.ti:focus{border-color:rgba(124,110,247,0.5)}
+.ab{background:linear-gradient(135deg,#7c6ef7,#a78bfa);border:none;border-radius:var(--rs);padding:9px 16px;color:#fff;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap}
+.ab:hover{opacity:0.88}
+.row{display:flex;gap:8px;margin-bottom:12px}
+
+/* GREETING */
+.gr{padding:24px;margin-bottom:20px}
+.gr h1{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px}
+.gr p{font-size:14px;color:var(--t2)}
+.grs{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}
+.gs{text-align:center;min-width:60px}
+.gn{font-family:'Syne',sans-serif;font-size:22px;font-weight:700}
+.gl{font-size:11px;color:var(--t2);margin-top:2px}
+.gn.pu{color:var(--a2)}.gn.bl{color:var(--a3)}.gn.gn2{color:var(--ok)}
+.pw{height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;margin-top:12px}
+.pf{height:100%;border-radius:3px;background:linear-gradient(90deg,#7c6ef7,#38bdf8);transition:width 0.5s ease}
+
+/* INNER TABS */
+.it-bar{display:flex;gap:4px;padding:5px;background:rgba(0,0,0,0.25);border-radius:10px;margin-bottom:18px}
+.it{flex:1;padding:7px 10px;border-radius:7px;font-size:13px;font-weight:500;text-align:center;cursor:pointer;color:var(--t2);transition:all 0.2s;border:none;background:transparent}
+.it.on{background:rgba(124,110,247,0.25);color:var(--a2);border:1px solid rgba(124,110,247,0.3)}
+
+/* TASKS */
+.titem{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(0,0,0,0.2);border:1px solid var(--gb);border-radius:var(--rs);transition:all 0.2s;animation:fu 0.3s ease;margin-bottom:8px}
+.titem:hover{background:rgba(124,110,247,0.08);border-color:rgba(124,110,247,0.25)}
+.titem.dn{opacity:0.45}
+.titem.dn .tt{text-decoration:line-through;color:var(--t3)}
+.ck{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--t3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;cursor:pointer}
+.ck.on{background:linear-gradient(135deg,#7c6ef7,#38bdf8);border-color:transparent}
+.cksv{display:none}.ck.on .cksv{display:block}
+.tt{flex:1;font-size:14px}
+.pd{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.ph2{background:var(--err)}.pm{background:var(--warn)}.pl{background:var(--ok)}
+.tdel{opacity:0;transition:opacity 0.15s;background:transparent;border:none;cursor:pointer;color:var(--t3);font-size:13px;padding:2px 6px}
+.titem:hover .tdel{opacity:1}
+
+/* HABITS */
+.hr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.hn{font-size:13px;color:var(--t2);width:90px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hds{display:flex;gap:4px;flex:1}
+.hd{width:26px;height:26px;border-radius:6px;background:rgba(0,0,0,0.3);border:1px solid var(--gb);cursor:pointer;transition:all 0.18s;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3)}
+.hd.on{background:rgba(52,211,153,0.22);border-color:rgba(52,211,153,0.4);color:var(--ok)}
+.hd.td2{border-color:var(--a2)!important}
+.hp{font-size:12px;font-weight:600;min-width:34px;text-align:right}
+
+/* NOTES */
+.nc{padding:14px;background:rgba(0,0,0,0.2);border:1px solid var(--gb);border-radius:var(--rs);cursor:pointer;transition:background 0.2s;animation:fu 0.3s ease;margin-bottom:10px}
+.nc:hover{background:rgba(167,139,250,0.08)}
+.nt2{font-size:14px;font-weight:500;margin-bottom:4px}
+.np{font-size:12px;color:var(--t2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nm{font-size:11px;color:var(--t3);margin-top:6px}
+.nn{padding:12px;background:rgba(0,0,0,0.15);border:1px dashed var(--t3);border-radius:var(--rs);cursor:pointer;color:var(--t3);font-size:13px;text-align:center;transition:all 0.2s;margin-top:10px}
+.nn:hover{border-color:var(--a2);color:var(--a2)}
+.ne2{display:none;flex-direction:column;gap:8px;margin-bottom:12px}
+.ne2.on{display:flex}
+
+/* REMINDERS */
+.ri2{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;background:rgba(0,0,0,0.2);border:1px solid var(--gb);border-radius:var(--rs);animation:fu 0.3s ease;margin-bottom:8px}
+.ric{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
+.rpu{background:rgba(124,110,247,0.2)}.rbl{background:rgba(56,189,248,0.2)}.ram{background:rgba(251,191,36,0.2)}.rrd{background:rgba(248,113,113,0.18)}
+.rct{flex:1;min-width:0}
+.rtl{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rtm{font-size:11px;color:var(--t3);margin-top:2px}
+.rtg{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;margin-top:4px;display:inline-block}
+.tw2{background:rgba(124,110,247,0.18);color:var(--a2)}.th{background:rgba(52,211,153,0.15);color:var(--ok)}.tp{background:rgba(56,189,248,0.15);color:var(--a3)}.tu{background:rgba(248,113,113,0.15);color:var(--err)}
+.ri3{background:rgba(0,0,0,0.25);border:1px solid var(--gb);border-radius:var(--rs);padding:8px 11px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;flex:1}
+.ri3:focus{border-color:rgba(124,110,247,0.4)}
+.rb{background:rgba(124,110,247,0.2);border:1px solid rgba(124,110,247,0.35);border-radius:var(--rs);padding:8px 13px;color:var(--a2);font-size:13px;font-weight:500;cursor:pointer}
+
+/* CALENDAR */
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cm{font-family:'Syne',sans-serif;font-size:15px;font-weight:600}
+.cn2{display:flex;gap:4px}
+.cb{background:rgba(0,0,0,0.25);border:1px solid var(--gb);border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);font-size:13px}
+.cdh{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px}
+.cdn{font-size:10px;color:var(--t3);text-align:center;padding:3px 0;font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cc{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:12px;cursor:pointer;transition:all 0.15s;color:var(--t2);position:relative}
+.cc:hover{background:rgba(124,110,247,0.15);color:var(--t1)}
+.cc.td3{background:linear-gradient(135deg,#7c6ef7,#a78bfa);color:#fff!important;font-weight:600}
+.cc.om{color:var(--t3);opacity:0.4}
+.cc.he::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--a3)}
+.cc.td3.he::after{background:#fff}
+
+/* MODALS */
+.mo{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:16px}
+.mo.on{display:flex}
+.md{background:#1a1e35;border:1px solid var(--gb);border-radius:var(--r);padding:24px;width:100%;max-width:440px;animation:fu 0.25s ease;max-height:90vh;overflow-y:auto}
+.mdt{font-family:'Syne',sans-serif;font-size:17px;font-weight:600;margin-bottom:16px}
+.mi{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--gb);border-radius:var(--rs);padding:10px 13px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;margin-bottom:10px}
+.ms2{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--gb);border-radius:var(--rs);padding:10px 13px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;margin-bottom:10px}
+.ms2 option{background:#1a1e35}
+.ma{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+.mc{background:transparent;border:1px solid var(--gb);border-radius:var(--rs);padding:9px 18px;color:var(--t2);font-size:14px;cursor:pointer}
+.msv{background:linear-gradient(135deg,#7c6ef7,#a78bfa);border:none;border-radius:var(--rs);padding:9px 20px;color:#fff;font-size:14px;font-weight:500;cursor:pointer}
+
+/* KID VIEW */
+.kid-hero{background:linear-gradient(135deg,rgba(124,110,247,0.15),rgba(56,189,248,0.1));border:1px solid rgba(124,110,247,0.2);border-radius:20px;padding:28px;text-align:center;margin-bottom:20px}
+.kid-hero h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;margin-bottom:6px}
+.kid-hero p{font-size:14px;color:var(--t2);margin-bottom:16px}
+.streak-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.3);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--warn);margin-top:8px}
+.wpb{flex:1;height:10px;background:rgba(255,255,255,0.08);border-radius:5px;overflow:hidden}
+.wpf{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width 0.5s ease}
+.rb2{background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(249,115,22,0.08));border:1px solid rgba(251,191,36,0.2);border-radius:var(--r);padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px}
+.it3{display:flex;align-items:center;gap:14px;padding:14px 16px;background:rgba(0,0,0,0.2);border:1px solid var(--gb);border-radius:var(--rs);transition:all 0.2s;animation:fu 0.3s ease;margin-bottom:10px;cursor:pointer}
+.it3:hover{background:rgba(251,191,36,0.05);border-color:rgba(251,191,36,0.2)}
+.it3.dn{opacity:0.5;background:rgba(52,211,153,0.05);border-color:rgba(52,211,153,0.2)}
+.it3.dn .it3t{text-decoration:line-through;color:var(--t3)}
+.ic{width:24px;height:24px;border-radius:6px;border:1.5px solid var(--t3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
+.ic.on{background:linear-gradient(135deg,var(--gold),var(--gold2));border-color:transparent}
+.it3t{flex:1;font-size:15px;line-height:1.4}
+.pb2{background:rgba(124,110,247,0.15);border:1px solid rgba(124,110,247,0.3);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;color:var(--a2)}
+.ro{background:rgba(0,0,0,0.2);border:1px solid var(--gb);border-radius:10px;padding:12px;cursor:pointer;transition:all 0.2s;text-align:center}
+.ro:hover,.ro.on{background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.4)}
+.roe{font-size:22px;display:block;margin-bottom:4px}
+.ron{font-size:13px;font-weight:500}
+.rop{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* SAVINGS GOAL */
+.sg{background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(124,110,247,0.08));border:1px solid rgba(56,189,248,0.2);border-radius:var(--r);padding:16px;margin-bottom:16px}
+.sg-title{font-size:13px;font-weight:600;color:var(--a3);margin-bottom:8px}
+.sg-bar{height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;margin:8px 0}
+.sg-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#38bdf8,#7c6ef7);transition:width 0.5s ease}
+.sg-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--t3)}
+
+/* BANK */
+.bc{background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(249,115,22,0.1));border:1px solid rgba(245,158,11,0.25);border-radius:20px;padding:24px;text-align:center;margin-bottom:20px;position:relative;overflow:hidden}
+.bc::before{content:'🏦';position:absolute;font-size:80px;opacity:0.06;right:-10px;top:-10px}
+.bbl{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,158,11,0.7);margin-bottom:8px}
+.bba{font-family:'Syne',sans-serif;font-size:48px;font-weight:700;color:var(--gold);line-height:1}
+.bbcu{font-size:24px;font-weight:400;vertical-align:super;margin-right:2px}
+.bbs2{font-size:13px;color:var(--t2);margin-top:8px}
+.bact{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.bb{border:none;border-radius:10px;padding:11px 14px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.2s}
+.bb:hover{opacity:0.88}
+.bbc2{background:linear-gradient(135deg,#f59e0b,#f97316);color:#fff}
+.bbs3{background:linear-gradient(135deg,#34d399,#059669);color:#fff}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.ac{background:rgba(0,0,0,0.2);border:1px solid var(--gb);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;text-align:center}
+.ac:hover{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.3);transform:translateY(-1px)}
+.ae{font-size:24px;display:block;margin-bottom:6px}
+.an{font-size:13px;font-weight:500;margin-bottom:3px}
+.aa{font-size:14px;font-weight:700;color:var(--gold)}
+.ti2{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(0,0,0,0.2);border:1px solid var(--gb);border-radius:var(--rs);margin-bottom:8px;animation:fu 0.3s ease}
+.tic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.tin{background:rgba(52,211,153,0.15)}.tout{background:rgba(248,113,113,0.15)}
+.tit{flex:1;min-width:0}
+.titl{font-size:13px;font-weight:500}
+.titm{font-size:11px;color:var(--t3);margin-top:2px}
+.tia{font-size:14px;font-weight:700}
+.tia.in{color:var(--ok)}.tia.out{color:var(--err)}
+.api{background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);border-radius:12px;padding:14px;margin-bottom:10px;animation:fu 0.3s ease}
+.aph{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.apt{font-size:14px;font-weight:500}
+.apa{font-size:16px;font-weight:700;color:var(--warn)}
+.apac{display:flex;gap:8px}
+.appr{background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);border-radius:7px;padding:6px 14px;color:var(--ok);font-size:13px;font-weight:500;cursor:pointer}
+.aprj{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);border-radius:7px;padding:6px 14px;color:var(--err);font-size:13px;font-weight:500;cursor:pointer}
+.appr:hover{background:rgba(52,211,153,0.25)}
+.aprj:hover{background:rgba(248,113,113,0.2)}
+
+/* PIN LOCK */
+.plock{text-align:center;padding:14px 0}
+.plock p{font-size:13px;color:var(--t2);margin-bottom:12px}
+.pi{background:rgba(0,0,0,0.3);border:1px solid var(--gb);border-radius:var(--rs);padding:9px 14px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:16px;outline:none;width:130px;letter-spacing:4px;text-align:center}
+.pi:focus{border-color:rgba(124,110,247,0.5)}
+.pub{background:rgba(124,110,247,0.2);border:1px solid rgba(124,110,247,0.35);border-radius:var(--rs);padding:9px 16px;color:var(--a2);font-size:13px;font-weight:600;cursor:pointer}
+.perr{font-size:12px;color:var(--err);margin-top:8px;display:none}
+
+/* REWARD MODAL */
+.rmd{background:#1a1e35;border:1px solid rgba(245,158,11,0.3);border-radius:20px;padding:28px;width:100%;max-width:400px;animation:fu 0.3s ease;text-align:center;max-height:90vh;overflow-y:auto}
+@keyframes bnc{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.hb{background:rgba(0,0,0,0.3);border:1px solid var(--gb);border-radius:10px;padding:14px;margin:16px 0;text-align:left}
+.ht{font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:12px;font-style:italic}
+.hcr{display:flex;align-items:center;gap:10px;cursor:pointer}
+.hck{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--t3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
+.hck.on{background:linear-gradient(135deg,#34d399,#059669);border-color:transparent}
+.hcl{font-size:13px;color:var(--t1);font-weight:500}
+.clb{background:linear-gradient(135deg,#f59e0b,#f97316);border:none;border-radius:10px;padding:13px 20px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;width:100%;transition:opacity 0.2s;margin-top:8px}
+.clb:disabled{opacity:0.35;cursor:not-allowed}
+.bib{background:linear-gradient(135deg,#34d399,#059669);border:none;border-radius:10px;padding:13px 20px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;width:100%;transition:opacity 0.2s;margin-top:8px}
+.bib:disabled{opacity:0.35;cursor:not-allowed}
+
+/* NOTIFICATIONS SETTINGS */
+.approval-banner{position:fixed;top:0;left:0;right:0;z-index:9999;background:linear-gradient(135deg,#34d399,#059669);padding:16px 24px;text-align:center;transform:translateY(-100%);transition:transform 0.4s ease;display:flex;align-items:center;justify-content:center;gap:12px}
+.approval-banner.show{transform:translateY(0)}
+.approval-banner-text{font-size:15px;font-weight:600;color:#fff}
+.approval-banner-close{background:rgba(255,255,255,0.2);border:none;border-radius:6px;padding:4px 10px;color:#fff;font-size:13px;cursor:pointer}
+.was{background:rgba(37,211,102,0.07);border:1px solid rgba(37,211,102,0.2);border-radius:12px;padding:14px;margin-bottom:12px}
+.wal{font-size:12px;color:rgba(37,211,102,0.8);font-weight:600;margin-bottom:6px}
+.wai{background:rgba(0,0,0,0.3);border:1px solid rgba(37,211,102,0.2);border-radius:var(--rs);padding:9px 12px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;width:100%;margin-bottom:8px}
+.wasb{background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);border-radius:var(--rs);padding:7px 16px;color:#25d366;font-size:13px;font-weight:600;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="orbs"><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+<div class="approval-banner" id="approval-banner">
+  <span style="font-size:20px">🎉</span>
+  <span class="approval-banner-text" id="approval-banner-text">Your request was approved!</span>
+  <button class="approval-banner-close" onclick="document.getElementById('approval-banner').classList.remove('show')">✕</button>
+</div>
+
+<div class="confetti-container" id="confetti-container"></div>
+<div class="toast" id="toast"></div>
+<div class="app">
+
+<!-- LOGIN -->
+<div id="ls">
+  <div class="lc">
+    <div class="ll">Flow ✦</div>
+    <div class="ls2">Your family productivity dashboard.<br/>Sign in to get started.</div>
+    <button class="gbtn" id="signin-btn" onclick="doSignIn()">
+      <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+  </div>
+</div>
+
+<!-- PARENT DASHBOARD -->
+<div id="db-parent" style="display:none">
+  <nav class="nav">
+    <div class="nl">Flow</div>
+    <div class="ntabs">
+      <button class="ntab on" onclick="goPg('my',this)">My Dashboard</button>
+      <button class="ntab" onclick="goPg('family',this)">👨‍👩‍👦 Family Hub</button>
+      <button class="ntab" onclick="goPg('bank',this)">🏦 Bank</button>
+    </div>
+    <div class="nr">
+      <span id="ss" style="font-size:11px;color:var(--t3)"><span class="sd"></span>Synced</span>
+      <button class="sob" onclick="doSignOut()">Sign out</button>
+      <div class="av" id="av-parent">Y</div>
+    </div>
+  </nav>
+
+  <!-- MY PAGE -->
+  <div id="pg-my" class="pg on">
+    <div class="tc">
+      <div>
+        <div class="g gr">
+          <h1 id="gtx">Good morning ✦</h1>
+          <p id="gsb">Here's your day at a glance</p>
+          <div class="grs">
+            <div class="gs"><div class="gn pu" id="st">0</div><div class="gl">Tasks left</div></div>
+            <div class="gs"><div class="gn bl" id="sr">0</div><div class="gl">Reminders</div></div>
+            <div class="gs"><div class="gn gn2" id="sh">0%</div><div class="gl">Habits done</div></div>
+          </div>
+          <div class="pw"><div class="pf" id="op" style="width:0%"></div></div>
+        </div>
+        <div class="it-bar">
+          <button class="it on" onclick="goTab('tasks',this)">Tasks</button>
+          <button class="it" onclick="goTab('habits',this)">Habits</button>
+          <button class="it" onclick="goTab('notes',this)">Notes</button>
+        </div>
+        <div id="pt" class="g pp">
+          <div class="sl">Today's Tasks</div>
+          <div class="row">
+            <input class="ti" id="tinp" placeholder="Add a new task..." onkeydown="if(event.key==='Enter')addTask()" style="flex:1"/>
+            <select id="tpri" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:9px 10px;color:#a0a8c8;font-size:13px;outline:none;cursor:pointer">
+              <option value="high">🔴 High</option><option value="med" selected>🟡 Med</option><option value="low">🟢 Low</option>
+            </select>
+            <button class="ab" onclick="addTask()">+ Add</button>
+          </div>
+          <div id="tl"></div>
+        </div>
+        <div id="ph3" class="g pp" style="display:none">
+          <div class="sl">Weekly Habits</div>
+          <div id="hg"></div>
+          <div class="row" style="margin-top:12px">
+            <input class="ti" id="hinp" placeholder="Add habit..." onkeydown="if(event.key==='Enter')addHabit()" style="flex:1"/>
+            <button class="ab" onclick="addHabit()">+ Add</button>
+          </div>
+        </div>
+        <div id="pn" class="g pp" style="display:none">
+          <div class="sl">Quick Notes</div>
+          <div class="ne2" id="ne2">
+            <input class="ti" id="nti" placeholder="Title..." style="width:100%"/>
+            <textarea class="ti" id="nbi" placeholder="What's on your mind?" style="width:100%;height:80px;resize:none;margin-top:4px"></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+              <button class="mc" onclick="closeNote()">Cancel</button>
+              <button class="ab" onclick="saveNote()">Save</button>
+            </div>
+          </div>
+          <div id="nl2"></div>
+          <div class="nn" onclick="openNote()" id="nnb">+ New note</div>
+        </div>
+      </div>
+      <div>
+        <div class="g pp" style="margin-bottom:20px">
+          <div class="ch">
+            <div class="cm" id="clbl"></div>
+            <div class="cn2"><div class="cb" onclick="chMo(-1)">‹</div><div class="cb" onclick="chMo(1)">›</div></div>
+          </div>
+          <div class="cdh"><div class="cdn">Su</div><div class="cdn">Mo</div><div class="cdn">Tu</div><div class="cdn">We</div><div class="cdn">Th</div><div class="cdn">Fr</div><div class="cdn">Sa</div></div>
+          <div class="cg" id="cg"></div>
+        </div>
+        <div class="g pp">
+          <div class="sl">Upcoming</div>
+          <div id="rl"></div>
+          <div class="row" style="margin-top:10px">
+            <input class="ri3" id="rinp" placeholder="Add reminder..." onkeydown="if(event.key==='Enter')openRemMo()"/>
+            <button class="rb" onclick="openRemMo()">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAMILY HUB PAGE (PARENT VIEW) -->
+  <div id="pg-family" class="pg">
+    <div class="tc">
+      <div>
+        <div class="g" style="padding:20px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div class="sl" style="margin-bottom:0">Ishaan's Weekly Tasks</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:12px;color:var(--t2)" id="streak-display"></span>
+              <div class="pb2">Parent View</div>
+            </div>
+          </div>
+          <div id="itl-parent"></div>
+        </div>
+        <!-- PARENT CONTROLS (PIN LOCKED) -->
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <div class="sl" style="margin-bottom:0">Parent Controls</div>
+            <div class="pb2">🔒 PIN Protected</div>
+          </div>
+          <div class="g pp">
+            <div id="pcl">
+              <div class="plock">
+                <div style="font-size:28px;margin-bottom:8px">🔒</div>
+                <p>Enter your parent PIN to manage tasks and rewards</p>
+                <div style="display:flex;gap:8px;justify-content:center">
+                  <input class="pi" id="pcpi" type="password" maxlength="6" placeholder="PIN" onkeydown="if(event.key==='Enter')unlockPC()"/>
+                  <button class="pub" onclick="unlockPC()">Unlock</button>
+                </div>
+                <div class="perr" id="pcpe">Incorrect PIN. Try again.</div>
+              </div>
+            </div>
+            <div id="pcu" style="display:none">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+                <div style="font-size:12px;color:var(--ok)">🔓 Unlocked</div>
+                <button onclick="lockPC()" style="background:transparent;border:none;cursor:pointer;color:var(--t3);font-size:12px">Lock</button>
+              </div>
+              <div class="sl">Add Weekly Task</div>
+              <div class="row">
+                <input class="ti" id="itinp" placeholder="e.g. Clean your room..." style="flex:1" onkeydown="if(event.key==='Enter')addIT()"/>
+                <button class="ab" onclick="addIT()">+ Add</button>
+              </div>
+              <div class="sl" style="margin-top:16px">Set This Week's Reward</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px" id="ros">
+                <div class="ro on" onclick="selR(this,'🍦','Ice Cream','Any flavour, up to ₹300',300)"><span class="roe">🍦</span><div class="ron">Ice Cream</div><div class="rop">Up to ₹300</div></div>
+                <div class="ro" onclick="selR(this,'🍕','Pizza Lunch','Restaurant of choice, up to ₹800',800)"><span class="roe">🍕</span><div class="ron">Pizza Lunch</div><div class="rop">Up to ₹800</div></div>
+                <div class="ro" onclick="selR(this,'🎮','Gaming Voucher','Online store, up to ₹1000',1000)"><span class="roe">🎮</span><div class="ron">Gaming Voucher</div><div class="rop">Up to ₹1,000</div></div>
+                <div class="ro" onclick="selR(this,'🛍️','Shopping Trip','Buy something you like',1000)"><span class="roe">🛍️</span><div class="ron">Shopping Trip</div><div class="rop">Up to ₹1,000</div></div>
+              </div>
+              <div class="row">
+                <input class="ti" id="crn" placeholder="Custom reward..." style="flex:1"/>
+                <input class="ti" id="cre" placeholder="🎁" style="width:50px;flex:none"/>
+                <input class="ti" id="crv" placeholder="₹" style="width:65px;flex:none"/>
+                <button class="ab" onclick="setCustomR()" style="background:rgba(124,110,247,0.2);color:var(--a2);border:1px solid rgba(124,110,247,0.3)">Set</button>
+              </div>
+              <button class="ab" onclick="saveReward()" style="width:100%;padding:11px;margin-top:4px">💾 Save Reward</button>
+              <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--gb)">
+                <button onclick="resetWeek()" style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:var(--rs);padding:8px 16px;color:var(--err);font-size:13px;cursor:pointer;width:100%">🔄 Reset Week (clear all ticks)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="g pp" style="margin-bottom:20px">
+          <div class="sl">Ishaan's Progress</div>
+          <div style="text-align:center;padding:16px 0">
+            <div style="font-family:'Syne',sans-serif;font-size:48px;font-weight:700;color:var(--warn)" id="ibp">0%</div>
+            <div style="font-size:13px;color:var(--t2);margin-top:4px" id="itc">0 of 0 tasks done</div>
+          </div>
+          <div style="height:8px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden">
+            <div class="wpf" id="ipf2" style="width:0%;height:100%;border-radius:4px"></div>
+          </div>
+          <div style="margin-top:12px;font-size:13px;color:var(--t2)" id="ism">Keep going!</div>
+        </div>
+        <div class="g pp" style="margin-bottom:20px">
+          <div class="sl">Reward This Week</div>
+          <div style="text-align:center;padding:12px 0">
+            <div style="font-size:44px;margin-bottom:8px" id="rpe">🎁</div>
+            <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:600;color:var(--warn);margin-bottom:4px" id="rpn">Set a reward!</div>
+            <div style="font-size:12px;color:var(--t2)" id="rps">Budget: ₹1,000</div>
+          </div>
+        </div>
+        <div class="g pp">
+          <div class="sl">Bank Balance</div>
+          <div style="text-align:center;padding:12px 0">
+            <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:var(--gold)">₹<span id="ibs">0</span></div>
+            <div style="font-size:12px;color:var(--t2);margin-top:4px">Ishaan's savings</div>
+          </div>
+          <button onclick="goPg('bank',document.querySelectorAll('.ntab')[2])" style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(249,115,22,0.1));border:1px solid rgba(245,158,11,0.25);border-radius:var(--rs);padding:9px 16px;color:var(--gold);font-size:13px;font-weight:500;cursor:pointer;width:100%;margin-top:4px">Go to Bank →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BANK PAGE -->
+  <div id="pg-bank" class="pg">
+    <div class="tc">
+      <div>
+        <div class="bc">
+          <div class="bbl">Ishaan's Piggy Bank 🐷</div>
+          <div class="bba"><span class="bbcu">₹</span><span id="bbd">0</span></div>
+          <div class="bbs2">Available balance</div>
+          <div class="bact">
+            <button class="bb bbc2" onclick="openWD()">💸 Withdraw</button>
+            <button class="bb bbs3" onclick="openCA()">🏆 Achievement</button>
+          </div>
+        </div>
+        <div id="psec" style="display:none;margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div class="sl" style="margin-bottom:0">Pending Approvals</div>
+            <div class="pb2">🔒 Parent Only</div>
+          </div>
+          <div id="pl2"></div>
+        </div>
+        <div class="g pp">
+          <div class="sl">Transaction History</div>
+          <div id="txl"><div class="es">No transactions yet</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="g pp" style="margin-bottom:20px">
+          <div class="sl">Earn Money</div>
+          <div class="ag">
+            <div class="ac" onclick="subAch('🎓','Pink Card at School',4000)"><span class="ae">🎓</span><div class="an">Pink Card</div><div class="aa">+₹4,000</div></div>
+            <div class="ac" onclick="subAch('🏠','Helping at Home',500)"><span class="ae">🏠</span><div class="an">Helping at Home</div><div class="aa">+₹500</div></div>
+            <div class="ac" onclick="subAch('📚','Reading a Book',200)"><span class="ae">📚</span><div class="an">Reading a Book</div><div class="aa">+₹200</div></div>
+            <div class="ac" onclick="openCA()"><span class="ae">✨</span><div class="an">Other</div><div class="aa">Custom</div></div>
+          </div>
+          <div style="font-size:12px;color:var(--t3);text-align:center">All achievements need parent approval</div>
+        </div>
+        <!-- NOTIFICATION SETTINGS (PIN LOCKED) -->
+        <div class="g pp" style="margin-bottom:20px">
+          <div class="sl">Notification Settings</div>
+          <div id="wal2">
+            <div class="plock">
+              <div style="font-size:28px;margin-bottom:8px">🔒</div>
+              <p>Parent PIN required</p>
+              <div style="display:flex;gap:8px;justify-content:center">
+                <input class="pi" id="wapi" type="password" maxlength="6" placeholder="PIN" onkeydown="if(event.key==='Enter')unlockWA()"/>
+                <button class="pub" onclick="unlockWA()">Unlock</button>
+              </div>
+              <div class="perr" id="wape">Incorrect PIN.</div>
+            </div>
+          </div>
+          <div id="wau" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <div style="font-size:12px;color:var(--ok)">🔓 Unlocked</div>
+              <button onclick="lockWA()" style="background:transparent;border:none;cursor:pointer;color:var(--t3);font-size:12px">Lock</button>
+            </div>
+            <div class="was">
+              <div class="wal">📧 Parent 1 Email (reference)</div>
+              <input class="wai" id="wan1" placeholder="email@gmail.com"/>
+              <div class="wal" style="margin-top:8px">📧 Parent 2 Email (reference)</div>
+              <input class="wai" id="wan2" placeholder="email@gmail.com"/>
+              <button class="wasb" onclick="saveWA()">Save</button>
+            </div>
+            <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--gb)">
+              <div style="font-size:12px;color:var(--t3);margin-bottom:8px">Change Parent PIN</div>
+              <div style="display:flex;gap:8px">
+                <input id="npi" type="password" maxlength="6" placeholder="New PIN (min 4 digits)" style="background:rgba(0,0,0,0.3);border:1px solid var(--gb);border-radius:var(--rs);padding:8px 12px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;flex:1;letter-spacing:3px;text-align:center"/>
+                <button class="wasb" onclick="savePIN()">Set PIN</button>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--t3);line-height:1.6;margin-top:10px">Both parents get email notifications. First to approve wins.</div>
+        </div>
+        <div class="g pp">
+          <div class="sl">Bank Stats</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--gb)">
+              <span style="font-size:13px;color:var(--t2)">Total Earned</span>
+              <span style="font-size:15px;font-weight:700;color:var(--ok)">₹<span id="bte">0</span></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--gb)">
+              <span style="font-size:13px;color:var(--t2)">Total Withdrawn</span>
+              <span style="font-size:15px;font-weight:700;color:var(--err)">₹<span id="btw">0</span></span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
+              <span style="font-size:13px;color:var(--t2)">Pending Approval</span>
+              <span style="font-size:15px;font-weight:700;color:var(--warn)">₹<span id="btp">0</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KID DASHBOARD -->
+<div id="db-kid" style="display:none">
+  <nav class="nav">
+    <div class="nl">Flow ✦</div>
+    <div class="ntabs">
+      <button class="ntab on" onclick="goKidPg('tasks',this)">My Tasks</button>
+      <button class="ntab" onclick="goKidPg('bank',this)">🏦 My Bank</button>
+    </div>
+    <div class="nr">
+      <button class="sob" onclick="doSignOut()">Sign out</button>
+      <div class="av" id="av-kid">I</div>
+    </div>
+  </nav>
+
+  <!-- KID TASKS PAGE -->
+  <div id="kpg-tasks" class="pg on" style="max-width:600px;margin:0 auto">
+    <div class="kid-hero g">
+      <h1 id="kid-greeting">Hey Ishaan! 🌟</h1>
+      <p>Complete all your tasks to unlock your reward this week</p>
+      <div class="streak-badge" id="kid-streak">🔥 0 week streak</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:16px">
+        <div class="wpb"><div class="wpf" id="kid-prog" style="width:0%"></div></div>
+        <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--warn);min-width:36px;text-align:right" id="kid-pct">0%</div>
+      </div>
+    </div>
+    <div class="rb2" style="margin-top:16px">
+      <div style="font-size:28px;flex-shrink:0" id="kid-reward-emoji">🎁</div>
+      <div style="flex:1">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(251,191,36,0.7);margin-bottom:3px">This week's reward</div>
+        <div style="font-size:15px;font-weight:600;color:var(--warn)" id="kid-reward-name">Complete all tasks!</div>
+        <div style="font-size:12px;color:var(--t2);margin-top:2px" id="kid-reward-sub">Budget: ₹1,000</div>
+      </div>
+    </div>
+    <!-- SAVINGS GOAL -->
+    <div class="sg g" id="kid-sg-section" style="display:none">
+      <div class="sg-title">🎯 Savings Goal: <span id="sg-name">-</span></div>
+      <div class="sg-bar"><div class="sg-fill" id="sg-fill" style="width:0%"></div></div>
+      <div class="sg-labels"><span>₹<span id="sg-current">0</span> saved</span><span>₹<span id="sg-target">0</span> goal</span></div>
+    </div>
+    <div class="g pp" style="margin-top:16px">
+      <div class="sl">This Week's Challenges</div>
+      <div id="kid-task-list"><div class="es">No tasks set yet — check back soon!</div></div>
+    </div>
+    <!-- Set savings goal -->
+    <div class="g pp" style="margin-top:16px">
+      <div class="sl">My Savings Goal</div>
+      <div class="row">
+        <input class="ti" id="sg-name-inp" placeholder="What are you saving for?" style="flex:1"/>
+        <input class="ti" id="sg-amt-inp" type="number" placeholder="₹" style="width:80px;flex:none"/>
+        <button class="ab" onclick="setSavingsGoal()" style="background:rgba(56,189,248,0.2);color:var(--a3);border:1px solid rgba(56,189,248,0.3)">Set</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KID BANK PAGE -->
+  <div id="kpg-bank" class="pg" style="max-width:600px;margin:0 auto">
+    <div class="bc">
+      <div class="bbl">My Piggy Bank 🐷</div>
+      <div class="bba"><span class="bbcu">₹</span><span id="kid-bal">0</span></div>
+      <div class="bbs2">My savings</div>
+      <div class="bact">
+        <button class="bb bbc2" onclick="openWD()">💸 Withdraw</button>
+        <button class="bb bbs3" onclick="openCA()">🏆 Achievement</button>
+      </div>
+    </div>
+    <!-- KID SAVINGS GOAL IN BANK -->
+    <div class="sg g" id="kid-sg-bank" style="display:none;margin-bottom:16px">
+      <div class="sg-title">🎯 Saving for: <span id="sg-name-bank">-</span></div>
+      <div class="sg-bar"><div class="sg-fill" id="sg-fill-bank" style="width:0%"></div></div>
+      <div class="sg-labels"><span>₹<span id="sg-cur-bank">0</span></span><span>₹<span id="sg-tgt-bank">0</span> goal</span></div>
+    </div>
+    <div class="g pp" style="margin-bottom:16px">
+      <div class="sl">Earn Money</div>
+      <div class="ag">
+        <div class="ac" onclick="subAch('🎓','Pink Card at School',4000)"><span class="ae">🎓</span><div class="an">Pink Card</div><div class="aa">+₹4,000</div></div>
+        <div class="ac" onclick="subAch('🏠','Helping at Home',500)"><span class="ae">🏠</span><div class="an">Helping at Home</div><div class="aa">+₹500</div></div>
+        <div class="ac" onclick="subAch('📚','Reading a Book',200)"><span class="ae">📚</span><div class="an">Reading a Book</div><div class="aa">+₹200</div></div>
+        <div class="ac" onclick="openCA()"><span class="ae">✨</span><div class="an">Other</div><div class="aa">Custom</div></div>
+      </div>
+    </div>
+    <div class="g pp">
+      <div class="sl">Transaction History</div>
+      <div id="kid-txl"><div class="es">No transactions yet</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS (shared) -->
+<div class="mo" id="mo-rem">
+  <div class="md">
+    <div class="mdt">New Reminder</div>
+    <input class="mi" id="rm-t" placeholder="Reminder title"/>
+    <input class="mi" id="rm-d" type="datetime-local"/>
+    <select class="ms2" id="rm-tag"><option value="work">Work</option><option value="health">Health</option><option value="personal">Personal</option><option value="urgent">Urgent</option></select>
+    <div class="ma"><button class="mc" onclick="closeMo('mo-rem')">Cancel</button><button class="msv" onclick="saveRem()">Save</button></div>
+  </div>
+</div>
+
+<div class="mo" id="mo-reward">
+  <div class="rmd">
+    <div style="font-size:52px;margin-bottom:12px;animation:bnc 0.6s ease infinite alternate" id="rme">🎉</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:6px;color:var(--warn)">You did it! 🏆</h2>
+    <p style="font-size:14px;color:var(--t2);line-height:1.6;margin-bottom:16px">All tasks done! Choose what to do with your reward:</p>
+    <div style="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(249,115,22,0.1));border:1px solid rgba(245,158,11,0.25);border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(245,158,11,0.7);margin-bottom:5px">Your Reward</div>
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--warn)" id="rmn">Ice Cream 🍦</div>
+      <div style="font-size:12px;color:var(--t2);margin-top:3px" id="rmsb">Up to ₹300</div>
+    </div>
+    <div class="hb">
+      <div style="font-size:12px;font-weight:600;color:var(--t2);margin-bottom:8px">✋ Honour Code</div>
+      <div class="ht">"I honestly completed all my tasks this week on my own. I deserve this reward."</div>
+      <div class="hcr" onclick="togHonour()">
+        <div class="hck" id="hck"></div>
+        <div class="hcl">I agree to the honour code ✓</div>
+      </div>
+    </div>
+    <button class="clb" id="clbtn" disabled onclick="claimNow()">💸 Claim Now (notify parents)</button>
+    <button class="bib" id="bibtn" disabled onclick="bankIt()">🏦 Bank It (save for later)</button>
+  </div>
+</div>
+
+<div class="mo" id="mo-wd">
+  <div class="md">
+    <div class="mdt">💸 Withdraw Money</div>
+    <div style="font-size:13px;color:var(--t2);margin-bottom:14px">Available: ₹<span id="wdav">0</span></div>
+    <input class="mi" id="wdamt" type="number" placeholder="Amount in ₹" min="1"/>
+    <input class="mi" id="wdreason" placeholder="What's it for? e.g. buy a book"/>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:12px;padding:10px;background:rgba(37,211,102,0.05);border-radius:8px;border:1px solid rgba(37,211,102,0.15)">Your parents will get an email to approve this.</div>
+    <div class="ma"><button class="mc" onclick="closeMo('mo-wd')">Cancel</button><button class="msv" onclick="subWD()">Request</button></div>
+  </div>
+</div>
+
+<div class="mo" id="mo-ca">
+  <div class="md">
+    <div class="mdt">✨ Custom Achievement</div>
+    <input class="mi" id="can" placeholder="Achievement name..."/>
+    <input class="mi" id="caa" type="number" placeholder="Amount in ₹" min="1"/>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:12px">Parent approval required before added to balance.</div>
+    <div class="ma"><button class="mc" onclick="closeMo('mo-ca')">Cancel</button><button class="msv" onclick="subCA()">Submit</button></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut as fbSignOut, indexedDBLocalPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const FB = { apiKey:"AIzaSyAYit-D2L4WL9EGyxIoLj3XmIlnVFQWgiQ", authDomain:"flow-dashboard-83f95.firebaseapp.com", projectId:"flow-dashboard-83f95", storageBucket:"flow-dashboard-83f95.firebasestorage.app", messagingSenderId:"397280852022", appId:"1:397280852022:web:e015175ca72fa66fe20097" };
+const app = initializeApp(FB);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const prov = new GoogleAuthProvider();
+prov.setCustomParameters({ prompt: 'select_account' });
+auth.useDeviceLanguage();
+// Set persistence immediately so it applies to auth state restoration
+setPersistence(auth, indexedDBLocalPersistence).catch(e => console.log('Persistence:', e));
+
+// All data stored under this family UID
+const FAMILY_UID = 'bBBPgVPurfdxth5b03EZtX66VLI2';
+// Parent emails — only these get full dashboard
+const PARENT_EMAILS = ['shashwat.b@gmail.com', 'ila.badoni@gmail.com'];
+// Default weekly tasks for auto-reset
+const DEFAULT_TASKS = [
+  {text:'Complete homework', emoji:'📚'},
+  {text:'Physical activity (30 mins)', emoji:'🏃'},
+  {text:'Clean, healthy food choices', emoji:'🥗'},
+  {text:'Take permission before using devices', emoji:'📱'},
+  {text:'Show kindness to staff and guards', emoji:'❤️'}
+];
+
+const MOS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+let now = new Date(), cY = now.getFullYear(), cM = now.getMonth();
+let uid = null, isParent = false;
+let tasks=[], habits=[], notes=[], reminders=[];
+let iT=[], iR={emoji:"🎁",name:"Complete all tasks!",sub:"Budget: ₹1,000",value:1000};
+let selR2={emoji:"🍦",name:"Ice Cream",sub:"Any flavour, up to ₹300",value:300};
+let honoured=false;
+let bk={balance:0,transactions:[],pending:[]};
+let wa1='', wa2='', pin='';
+let savingsGoal={name:'',target:0};
+let streak=0;
+
+// EmailJS is initialised inside sendEmail()
+
+// Toast
+let toastTimer;
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// Confetti
+function launchConfetti() {
+  const c = document.getElementById('confetti-container');
+  c.innerHTML = '';
+  const colors = ['#7c6ef7','#a78bfa','#38bdf8','#f59e0b','#34d399','#f87171'];
+  for (let i=0; i<80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-delay:${Math.random()*1.5}s;animation-duration:${2+Math.random()*2}s;transform:rotate(${Math.random()*360}deg)`;
+    c.appendChild(el);
+  }
+  setTimeout(() => c.innerHTML='', 5000);
+}
+
+// Approval notification for Ishaan
+function showApprovalBanner(item) {
+  const msgs = {
+    'reward_claim': `🎉 Your reward claim was approved! ₹${item.amount} paid out!`,
+    'withdrawal': `💸 Withdrawal of ₹${item.amount} approved! Go spend it!`,
+    'achievement': `🏆 Achievement approved! ₹${item.amount} added to your bank!`
+  };
+  const msg = msgs[item.type] || `✅ Request approved! ₹${item.amount}`;
+  document.getElementById('approval-banner-text').textContent = msg;
+  const banner = document.getElementById('approval-banner');
+  banner.classList.add('show');
+  launchConfetti();
+  setTimeout(() => banner.classList.remove('show'), 6000);
+}
+
+// Auth
+// Handle redirect result when returning from Google sign-in
+getRedirectResult(auth).then(result => {
+  if (result && result.user) {
+    console.log('Signed in via redirect:', result.user.email);
+    // Auth state change will handle the rest
+  }
+}).catch(e => {
+  if (e.code === 'auth/redirect-cancelled-by-user') {
+    console.log('Redirect cancelled');
+  } else if (e.code !== 'auth/no-current-user') {
+    console.error('Redirect error:', e.code, e.message);
+    toast('Sign-in error: ' + e.code, 'err');
+  }
+});
+
+function isStandalone() {
+  return window.navigator.standalone === true ||
+    window.matchMedia('(display-mode: standalone)').matches;
+}
+
+window.doSignIn = async () => {
+  const btn = document.getElementById('signin-btn');
+  btn.textContent = 'Signing in...';
+  btn.style.opacity = '0.7';
+  btn.style.pointerEvents = 'none';
+  try {
+    await setPersistence(auth, indexedDBLocalPersistence);
+    // Always use redirect — most reliable across all iOS contexts
+    await signInWithRedirect(auth, prov);
+  } catch(e) {
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google`;
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+    if (e.code === 'auth/popup-blocked') toast('Popup blocked — please allow popups for this site', 'err');
+    else if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') toast('Sign-in error: ' + e.message, 'err');
+  }
+};
+window.doSignOut = async () => await fbSignOut(auth);
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    uid = user.uid;
+    isParent = PARENT_EMAILS.includes(user.email);
+    document.getElementById('ls').style.display = 'none';
+    if (isParent) {
+      document.getElementById('db-parent').style.display = 'block';
+      document.getElementById('db-kid').style.display = 'none';
+      const a = document.getElementById('av-parent');
+      if (user.photoURL) a.innerHTML=`<img src="${user.photoURL}">`; else a.textContent=(user.displayName||'P')[0];
+      initDash();
+    } else {
+      document.getElementById('db-parent').style.display = 'none';
+      document.getElementById('db-kid').style.display = 'block';
+      const a = document.getElementById('av-kid');
+      if (user.photoURL) a.innerHTML=`<img src="${user.photoURL}">`; else a.textContent=(user.displayName||user.email[0].toUpperCase())[0];
+      const name = (user.displayName||'').split(' ')[0] || 'Hey!';
+      document.getElementById('kid-greeting').textContent = `Hey ${name}! 🌟`;
+    }
+    listen();
+    checkAutoReset();
+  } else {
+    uid = null;
+    document.getElementById('ls').style.display = 'flex';
+    document.getElementById('db-parent').style.display = 'none';
+    document.getElementById('db-kid').style.display = 'none';
+    const btn = document.getElementById('signin-btn');
+    btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google`;
+    btn.style.opacity = '1';
+    btn.style.pointerEvents = 'auto';
+  }
+});
+
+// Auto-reset on Monday
+function checkAutoReset() {
+  const lastReset = localStorage.getItem('flow_last_reset');
+  const today = now.toISOString().slice(0,10);
+  const dayOfWeek = now.getDay();
+  if (dayOfWeek === 1 && lastReset !== today) {
+    localStorage.setItem('flow_last_reset', today);
+    setTimeout(() => {
+      const allDone = iT.length > 0 && iT.every(t => t.done);
+      if (allDone) streak = (streak||0) + 1;
+      if (iT.length === 0) {
+        iT = DEFAULT_TASKS.map((t,i) => ({id: Date.now()+i, text: `${t.emoji} ${t.text}`, done: false}));
+      } else {
+        iT = iT.map(t => ({...t, done: false}));
+      }
+      svO('iT', {items: iT, reward: iR, streak, lastReset: today});
+      toast('🌅 New week! Tasks reset automatically.');
+    }, 2000);
+  }
+}
+
+// Sync
+function setSyn(s) {
+  const el = document.getElementById('ss');
+  if (el) el.innerHTML = s ? '<span class="sd syn"></span><span style="color:var(--t3)">Syncing...</span>' : '<span class="sd"></span><span style="color:var(--t3)">Synced</span>';
+}
+async function sv(col, items) { if (!uid) return; setSyn(true); try { await setDoc(doc(db,"users",FAMILY_UID,col,"data"),{items}); setSyn(false); } catch(e){console.error(e);} }
+async function svO(col, obj) { if (!uid) return; setSyn(true); try { await setDoc(doc(db,"users",FAMILY_UID,col,"data"),obj); setSyn(false); } catch(e){console.error(e);} }
+
+function listen() {
+  ['tasks','habits','notes','reminders','iT','bk','cfg'].forEach(col => {
+    onSnapshot(doc(db,"users",FAMILY_UID,col,"data"), snap => {
+      if (!snap.exists()) {
+        if (col==='habits') { habits=[{id:1,name:"Meditate",done:[],emoji:"🧘"},{id:2,name:"Exercise",done:[],emoji:"💪"},{id:3,name:"Read",done:[],emoji:"📖"},{id:4,name:"Hydrate",done:[],emoji:"💧"}]; sv('habits',habits); }
+        if (col==='iT') {
+          iT = DEFAULT_TASKS.map((t,i) => ({id: Date.now()+i, text: `${t.emoji} ${t.text}`, done: false}));
+          svO('iT', {items: iT, reward: iR, streak: 0, lastReset: ''});
+        }
+        return;
+      }
+      const d = snap.data();
+      if (col==='tasks') { tasks=d.items||[]; renderTasks(); }
+      else if (col==='habits') { habits=d.items||[]; renderHabits(); }
+      else if (col==='notes') { notes=d.items||[]; renderNotes(); }
+      else if (col==='reminders') { reminders=d.items||[]; renderRems(); renderCal(); }
+      else if (col==='iT') {
+        iT=d.items||[]; iR=d.reward||iR; streak=d.streak||0;
+        savingsGoal=d.savingsGoal||{name:'',target:0};
+        renderIT(); updIS(); updRUI(); updStreak(); updSavingsGoal();
+      }
+      else if (col==='bk') {
+        // Check for newly approved items to notify Ishaan
+        if (!isParent && bk.pending) {
+          const prevPending = bk.pending ? bk.pending.filter(p=>p.status==='pending').length : 0;
+          const newData = d;
+          const newlyApproved = (newData.pending||[]).filter(p=>p.status==='approved');
+          if (newlyApproved.length > 0 && bk.pending) {
+            const oldApproved = bk.pending.filter(p=>p.status==='approved').map(p=>p.id);
+            newlyApproved.forEach(p => {
+              if (!oldApproved.includes(p.id)) {
+                showApprovalBanner(p);
+              }
+            });
+          }
+        }
+        bk=d; renderBank();
+      }
+      else if (col==='cfg') {
+        wa1=d.wa1||''; wa2=d.wa2||''; pin=d.pin||'';
+        const e1=document.getElementById('wan1'); const e2=document.getElementById('wan2');
+        if(e1)e1.value=wa1; if(e2)e2.value=wa2;
+      }
+      updStats();
+    });
+  });
+}
+
+function initDash() {
+  const h=now.getHours(), g=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('gtx').textContent=g+' ✦';
+  document.getElementById('gsb').textContent=DYS[now.getDay()]+', '+MOS[now.getMonth()]+' '+now.getDate();
+  renderCal();
+}
+
+function updStats() {
+  const st=document.getElementById('st'); if(st) st.textContent=tasks.filter(t=>!t.done).length;
+  const sr=document.getElementById('sr'); if(sr) sr.textContent=reminders.length;
+  const tk=tdKey(), tH=habits.length, dH=tH?habits.filter(h=>h.done&&h.done.includes(tk)).length:0;
+  const sh=document.getElementById('sh'); if(sh) sh.textContent=(tH?Math.round(dH/tH*100):0)+'%';
+  const tT=tasks.length, dT=tasks.filter(t=>t.done).length;
+  const op=document.getElementById('op'); if(op) op.style.width=(tT?Math.round(dT/tT*100):0)+'%';
+}
+
+function updStreak() {
+  const s = streak||0;
+  const el = document.getElementById('kid-streak');
+  if (el) el.textContent = `🔥 ${s} week streak`;
+  const sel = document.getElementById('streak-display');
+  if (sel) sel.textContent = `🔥 ${s} week streak`;
+}
+
+function updSavingsGoal() {
+  const has = savingsGoal && savingsGoal.name && savingsGoal.target > 0;
+  const bal = bk.balance||0;
+  ['kid-sg-section','kid-sg-bank'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.style.display = has ? 'block' : 'none';
+  });
+  if (has) {
+    const pct = Math.min(100, Math.round(bal/savingsGoal.target*100));
+    ['sg-name','sg-name-bank'].forEach(id => { const e=document.getElementById(id); if(e) e.textContent=savingsGoal.name; });
+    ['sg-current','sg-cur-bank'].forEach(id => { const e=document.getElementById(id); if(e) e.textContent=bal; });
+    ['sg-target','sg-tgt-bank'].forEach(id => { const e=document.getElementById(id); if(e) e.textContent=savingsGoal.target; });
+    ['sg-fill','sg-fill-bank'].forEach(id => { const e=document.getElementById(id); if(e) e.style.width=pct+'%'; });
+  }
+}
+
+window.setSavingsGoal = () => {
+  const name=document.getElementById('sg-name-inp').value.trim(), amt=parseInt(document.getElementById('sg-amt-inp').value);
+  if (!name||!amt) { toast('Enter a goal name and amount', 'err'); return; }
+  savingsGoal = {name, target: amt};
+  svO('iT', {items:iT, reward:iR, streak, savingsGoal, lastReset: localStorage.getItem('flow_last_reset')||''});
+  document.getElementById('sg-name-inp').value=''; document.getElementById('sg-amt-inp').value='';
+  toast('Savings goal set! 🎯');
+};
+
+// TASKS
+window.addTask=()=>{ const inp=document.getElementById('tinp'),txt=inp.value.trim(); if(!txt)return; tasks.unshift({id:Date.now(),text:txt,done:false,priority:document.getElementById('tpri').value}); inp.value=''; sv('tasks',tasks); };
+window.togTask=id=>{ const t=tasks.find(x=>x.id===id); if(t)t.done=!t.done; sv('tasks',tasks); };
+window.delTask=id=>{ tasks=tasks.filter(x=>x.id!==id); sv('tasks',tasks); };
+function renderTasks() {
+  const el=document.getElementById('tl'); if(!el)return;
+  if (!tasks.length) { el.innerHTML='<div class="es">No tasks yet!</div>'; return; }
+  el.innerHTML=tasks.map(t=>`<div class="titem ${t.done?'dn':''}"><div class="ck ${t.done?'on':''}" onclick="togTask(${t.id})"><svg class="cksv" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="tt">${t.text}</span><div class="pd ${t.priority==='high'?'ph2':t.priority==='low'?'pl':'pm'}"></div><button class="tdel" onclick="delTask(${t.id})">✕</button></div>`).join('');
+}
+
+// HABITS
+function tdKey(){ return now.toISOString().slice(0,10); }
+function wkDays(){ const a=[]; for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);a.push(d);} return a; }
+window.addHabit=()=>{ const inp=document.getElementById('hinp'),txt=inp.value.trim(); if(!txt)return; habits.push({id:Date.now(),name:txt,done:[],emoji:'✦'}); inp.value=''; sv('habits',habits); };
+window.togHabit=(id,k)=>{ const h=habits.find(x=>x.id===id); if(!h)return; if(!h.done)h.done=[]; const i=h.done.indexOf(k); if(i>-1)h.done.splice(i,1); else h.done.push(k); sv('habits',habits); };
+function renderHabits() {
+  const el=document.getElementById('hg'); if(!el)return;
+  if (!habits.length) { el.innerHTML='<div class="es">Add habits to track</div>'; return; }
+  const days=wkDays(), tk=tdKey();
+  el.innerHTML=habits.map(h=>{ const dn=h.done||[], dc=days.filter(d=>dn.includes(d.toISOString().slice(0,10))).length; const pct=Math.round(dc/7*100), pc=pct>=70?'var(--ok)':pct>=40?'var(--warn)':'var(--err)'; return`<div class="hr"><span class="hn">${h.emoji} ${h.name.length>9?h.name.slice(0,8)+'…':h.name}</span><div class="hds">${days.map(d=>{const k=d.toISOString().slice(0,10);return`<div class="hd ${dn.includes(k)?'on':''} ${k===tk?'td2':''}" onclick="togHabit(${h.id},'${k}')">${d.getDate()}</div>`;}).join('')}</div><span class="hp" style="color:${pc}">${pct}%</span></div>`; }).join('');
+}
+
+// NOTES
+window.openNote=()=>{ document.getElementById('ne2').classList.add('on'); document.getElementById('nnb').style.display='none'; };
+window.closeNote=()=>{ document.getElementById('ne2').classList.remove('on'); document.getElementById('nnb').style.display='block'; document.getElementById('nti').value=''; document.getElementById('nbi').value=''; };
+window.saveNote=()=>{ const t=document.getElementById('nti').value.trim(),b=document.getElementById('nbi').value.trim(); if(!t&&!b)return; notes.unshift({id:Date.now(),title:t||'Untitled',body:b,created:new Date().toISOString()}); sv('notes',notes); closeNote(); };
+window.delNote=id=>{ notes=notes.filter(n=>n.id!==id); sv('notes',notes); };
+function renderNotes() {
+  const el=document.getElementById('nl2'); if(!el)return;
+  if (!notes.length) { el.innerHTML='<div class="es">No notes yet</div>'; return; }
+  el.innerHTML=notes.map(n=>`<div class="nc"><div style="display:flex;justify-content:space-between"><div class="nt2">${n.title}</div><button onclick="delNote(${n.id})" style="background:transparent;border:none;cursor:pointer;color:var(--t3);font-size:13px">✕</button></div><div class="np">${n.body||'—'}</div><div class="nm">${new Date(n.created).toLocaleDateString('en',{month:'short',day:'numeric'})}</div></div>`).join('');
+}
+
+// REMINDERS
+const TICONS={work:'💼',health:'🌿',personal:'⭐',urgent:'⚡'};
+const TCLS={work:'rpu',health:'rbl',personal:'ram',urgent:'rrd'};
+const TCSS={work:'tw2',health:'th',personal:'tp',urgent:'tu'};
+function fmtRT(iso){ const d=new Date(iso),diff=Math.round((d-new Date())/60000); if(diff<0)return'Past due'; if(diff<60)return`In ${diff}m`; if(diff<1440)return`In ${Math.round(diff/60)}h`; return d.toLocaleDateString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); }
+window.openRemMo=()=>{ const v=document.getElementById('rinp').value.trim(); if(v)document.getElementById('rm-t').value=v; const def=new Date(); def.setHours(def.getHours()+1,0,0,0); document.getElementById('rm-d').value=def.toISOString().slice(0,16); openMo('mo-rem'); };
+window.saveRem=()=>{ const t=document.getElementById('rm-t').value.trim(),d=document.getElementById('rm-d').value,tag=document.getElementById('rm-tag').value; if(!t)return; reminders.unshift({id:Date.now(),title:t,time:d?new Date(d).toISOString():new Date().toISOString(),tag}); reminders.sort((a,b)=>new Date(a.time)-new Date(b.time)); sv('reminders',reminders); closeMo('mo-rem'); };
+window.delRem=id=>{ reminders=reminders.filter(r=>r.id!==id); sv('reminders',reminders); };
+function renderRems() {
+  const el=document.getElementById('rl'); if(!el)return;
+  if (!reminders.length) { el.innerHTML='<div class="es">No upcoming reminders</div>'; return; }
+  el.innerHTML=reminders.slice(0,6).map(r=>`<div class="ri2"><div class="ric ${TCLS[r.tag]||'rpu'}">${TICONS[r.tag]||'📌'}</div><div class="rct"><div class="rtl">${r.title}</div><div class="rtm">${fmtRT(r.time)}</div><span class="rtg ${TCSS[r.tag]||'tw2'}">${r.tag}</span></div><button onclick="delRem(${r.id})" style="background:transparent;border:none;cursor:pointer;color:var(--t3);font-size:12px;align-self:flex-start;padding:0 0 0 4px">✕</button></div>`).join('');
+}
+
+// CALENDAR
+window.chMo=d=>{ cM+=d; if(cM>11){cM=0;cY++;} if(cM<0){cM=11;cY--;} renderCal(); };
+function renderCal() {
+  const el=document.getElementById('clbl'); if(!el)return;
+  el.textContent=MOS[cM]+' '+cY;
+  const first=new Date(cY,cM,1), last=new Date(cY,cM+1,0), sd=first.getDay();
+  const evD=new Set(reminders.map(r=>{const d=new Date(r.time);return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}));
+  let cells='', prev=new Date(cY,cM,0).getDate();
+  for(let i=sd-1;i>=0;i--) cells+=`<div class="cc om">${prev-i}</div>`;
+  for(let d=1;d<=last.getDate();d++) { const isT=d===now.getDate()&&cM===now.getMonth()&&cY===now.getFullYear(); const hasE=evD.has(cY+'-'+(cM+1)+'-'+d); cells+=`<div class="cc ${isT?'td3':''} ${hasE?'he':''}">${d}</div>`; }
+  const rem=(7-((sd+last.getDate())%7))%7; for(let i=1;i<=rem;i++) cells+=`<div class="cc om">${i}</div>`;
+  document.getElementById('cg').innerHTML=cells;
+}
+
+// ISHAAN TASKS
+window.addIT=()=>{ const inp=document.getElementById('itinp'),txt=inp.value.trim(); if(!txt)return; iT.push({id:Date.now(),text:txt,done:false}); inp.value=''; svIT(); toast('Task added! ✅'); };
+window.togIT=id=>{
+  const t=iT.find(x=>x.id===id); if(!t)return; t.done=!t.done; svIT();
+  const total=iT.length, done=iT.filter(x=>x.done).length;
+  if(total>0&&done===total) { setTimeout(()=>{ launchConfetti(); showRewardMo(); }, 300); }
+};
+window.delIT=id=>{ iT=iT.filter(x=>x.id!==id); svIT(); };
+function svIT(){ svO('iT',{items:iT,reward:iR,streak:streak||0,savingsGoal,lastReset:localStorage.getItem('flow_last_reset')||''}); }
+
+window.selR=(el,emoji,name,sub,value)=>{ document.querySelectorAll('.ro').forEach(o=>o.classList.remove('on')); el.classList.add('on'); selR2={emoji,name,sub,value}; };
+window.setCustomR=()=>{ const name=document.getElementById('crn').value.trim(), emoji=document.getElementById('cre').value.trim()||'🎁', value=parseInt(document.getElementById('crv').value)||1000; if(!name)return; selR2={emoji,name,sub:`Up to ₹${value}`,value}; document.querySelectorAll('.ro').forEach(o=>o.classList.remove('on')); document.getElementById('crn').value=''; document.getElementById('cre').value=''; document.getElementById('crv').value=''; toast(`Reward "${name}" selected ✅`); };
+window.saveReward=()=>{ iR=selR2; svIT(); updRUI(); toast('Reward saved! ✅'); };
+window.resetWeek=()=>{ iT=iT.map(t=>({...t,done:false})); svIT(); toast('Week reset! Fresh start 🔄'); };
+
+function updRUI() {
+  ['rpe','kid-reward-emoji'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=iR.emoji;});
+  ['rpn','kid-reward-name'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=iR.name;});
+  ['rps','kid-reward-sub'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=iR.sub;});
+}
+
+function renderIT() {
+  // Parent view
+  const pel=document.getElementById('itl-parent');
+  if (pel) {
+    if (!iT.length) { pel.innerHTML='<div class="es">No tasks set yet</div>'; }
+    else { pel.innerHTML=iT.map(t=>`<div class="it3 ${t.done?'dn':''}"><div class="ic ${t.done?'on':''}">${t.done?'<svg width="12" height="10" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><span class="it3t">${t.text}</span><button onclick="delIT(${t.id})" style="background:transparent;border:none;cursor:pointer;color:var(--t3);font-size:12px;opacity:0.5">✕</button></div>`).join(''); }
+  }
+  // Kid view
+  const kel=document.getElementById('kid-task-list');
+  if (kel) {
+    if (!iT.length) { kel.innerHTML='<div class="es">No tasks yet — check back soon!</div>'; }
+    else { kel.innerHTML=iT.map(t=>`<div class="it3 ${t.done?'dn':''}" onclick="togIT(${t.id})"><div class="ic ${t.done?'on':''}">${t.done?'<svg width="12" height="10" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><span class="it3t">${t.text}</span></div>`).join(''); }
+  }
+}
+
+function updIS() {
+  const total=iT.length, done=iT.filter(t=>t.done).length, pct=total?Math.round(done/total*100):0;
+  ['ipf2','kid-prog'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.width=pct+'%';});
+  ['kid-pct'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=pct+'%';});
+  const ibp=document.getElementById('ibp'); if(ibp)ibp.textContent=pct+'%';
+  const itc=document.getElementById('itc'); if(itc)itc.textContent=`${done} of ${total} tasks done`;
+  const ism=document.getElementById('ism'); if(ism)ism.textContent=pct===0?'Keep going! 🌟':pct<50?`Great start! ${total-done} more to go 💪`:pct<100?`Almost there! Just ${total-done} left 🔥`:'🏆 All done! Claim your reward!';
+}
+
+// REWARD MODAL
+function showRewardMo() {
+  document.getElementById('rme').textContent=iR.emoji;
+  document.getElementById('rmn').textContent=iR.name+' '+iR.emoji;
+  document.getElementById('rmsb').textContent=iR.sub;
+  honoured=false;
+  document.getElementById('hck').classList.remove('on');
+  document.getElementById('clbtn').disabled=true;
+  document.getElementById('bibtn').disabled=true;
+  openMo('mo-reward');
+}
+window.togHonour=()=>{ honoured=!honoured; document.getElementById('hck').classList.toggle('on',honoured); document.getElementById('clbtn').disabled=!honoured; document.getElementById('bibtn').disabled=!honoured; };
+window.claimNow=()=>{
+  if (!honoured)return;
+  const amt=iR.value||1000;
+  if (!bk.pending)bk.pending=[];
+  bk.pending.push({id:Date.now(),type:'reward_claim',title:`Reward: ${iR.name}`,amount:amt,status:'pending',date:new Date().toISOString()});
+  svO('bk',bk);
+  sendEmail(`🎉 Task challenge complete! Wants to claim reward: ${iR.name} (₹${amt}). Approve at be-efficient.netlify.app`);
+  closeMo('mo-reward');
+  setTimeout(()=>{ const tabs=document.querySelectorAll('.ntab'); if(tabs[2])goPg('bank',tabs[2]); else goKidPg('bank',document.querySelectorAll('.ntab')[1]); },800);
+};
+window.bankIt=()=>{
+  if (!honoured)return;
+  const amt=iR.value||1000;
+  if (!bk.transactions)bk.transactions=[];
+  if (!bk.balance)bk.balance=0;
+  bk.balance+=amt;
+  bk.transactions.unshift({id:Date.now(),type:'in',emoji:'🏆',title:`Banked reward: ${iR.name}`,amount:amt,date:new Date().toISOString(),status:'approved'});
+  svO('bk',bk);
+  toast(`₹${amt} banked! 🏦 Balance: ₹${bk.balance}`);
+  closeMo('mo-reward');
+  setTimeout(()=>{ const tabs=document.querySelectorAll('.ntab'); if(tabs[2])goPg('bank',tabs[2]); else goKidPg('bank',document.querySelectorAll('.ntab')[1]); },800);
+};
+
+// BANK
+function renderBank() {
+  const bal=bk.balance||0;
+  ['bbd','ibs','kid-bal','wdav'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=bal;});
+  const txns=bk.transactions||[];
+  const earned=txns.filter(t=>t.type==='in'&&t.status==='approved').reduce((a,t)=>a+t.amount,0);
+  const withdrawn=txns.filter(t=>t.type==='out'&&t.status==='approved').reduce((a,t)=>a+t.amount,0);
+  const pending=(bk.pending||[]).filter(p=>p.status==='pending').reduce((a,p)=>a+p.amount,0);
+  ['bte'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=earned;});
+  ['btw'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=withdrawn;});
+  ['btp'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=pending;});
+  const txHTML = txns.length ? txns.slice(0,20).map(t=>`<div class="ti2"><div class="tic ${t.type==='in'?'tin':'tout'}">${t.emoji||'💰'}</div><div class="tit"><div class="titl">${t.title}</div><div class="titm">${new Date(t.date).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'})}</div></div><div class="tia ${t.type==='in'?'in':'out'}">${t.type==='in'?'+':'-'}₹${t.amount}</div></div>`).join('') : '<div class="es">No transactions yet</div>';
+  ['txl','kid-txl'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=txHTML;});
+  const pend=(bk.pending||[]).filter(p=>p.status==='pending');
+  const psec=document.getElementById('psec'); if(psec)psec.style.display=pend.length?'block':'none';
+  const pl2=document.getElementById('pl2');
+  if (pl2) pl2.innerHTML=pend.map(p=>`<div class="api"><div class="aph"><div><div class="apt">${p.title}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${new Date(p.date).toLocaleDateString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div><div class="apa">₹${p.amount}</div></div><div class="apac"><button class="appr" onclick="approve(${p.id})">✓ Approve</button><button class="aprj" onclick="reject2(${p.id})">✕ Reject</button></div></div>`).join('');
+  updSavingsGoal();
+}
+
+window.approve=id=>{ const p=(bk.pending||[]).find(x=>x.id===id); if(!p||p.status!=='pending'){toast('Already handled!','err');return;} p.status='approved'; if(!bk.transactions)bk.transactions=[]; if(p.type==='achievement'){bk.balance=(bk.balance||0)+p.amount;bk.transactions.unshift({id:Date.now(),type:'in',emoji:'✅',title:p.title,amount:p.amount,date:new Date().toISOString(),status:'approved'});}else if(p.type==='withdrawal'||p.type==='reward_claim'){bk.balance=Math.max(0,(bk.balance||0)-p.amount);bk.transactions.unshift({id:Date.now(),type:'out',emoji:'💸',title:p.title,amount:p.amount,date:new Date().toISOString(),status:'approved'});} svO('bk',bk); toast('Approved! ✅'); };
+window.reject2=id=>{ const p=(bk.pending||[]).find(x=>x.id===id); if(p)p.status='rejected'; svO('bk',bk); toast('Rejected'); };
+
+window.openWD=()=>{ document.getElementById('wdamt').value=''; document.getElementById('wdreason').value=''; openMo('mo-wd'); };
+window.subWD=()=>{
+  const amt=parseInt(document.getElementById('wdamt').value), reason=document.getElementById('wdreason').value.trim();
+  if(!amt||amt<1){toast('Enter a valid amount','err');return;}
+  if(amt>(bk.balance||0)){toast(`You only have ₹${bk.balance||0}`,'err');return;}
+  if(!reason){toast("What's it for?",'err');return;}
+  if(!bk.pending)bk.pending=[];
+  bk.pending.push({id:Date.now(),type:'withdrawal',title:`Withdrawal: ${reason}`,amount:amt,status:'pending',date:new Date().toISOString()});
+  svO('bk',bk);
+  sendEmail(`💸 Withdrawal request: ₹${amt} for "${reason}". Balance: ₹${bk.balance}. Approve at be-efficient.netlify.app`);
+  closeMo('mo-wd');
+};
+window.subAch=(emoji,name,amount)=>{ if(!bk.pending)bk.pending=[]; bk.pending.push({id:Date.now(),type:'achievement',title:`${emoji} ${name}`,amount,status:'pending',date:new Date().toISOString()}); svO('bk',bk); sendEmail(`🏆 Achievement: "${name}" requesting ₹${amount}. Approve at be-efficient.netlify.app`); toast(`"${name}" submitted for approval 📧`); };
+window.openCA=()=>{ document.getElementById('can').value=''; document.getElementById('caa').value=''; openMo('mo-ca'); };
+window.subCA=()=>{ const name=document.getElementById('can').value.trim(), amt=parseInt(document.getElementById('caa').value); if(!name||!amt){toast('Please fill both fields','err');return;} subAch('✨',name,amt); closeMo('mo-ca'); };
+
+// EMAIL
+function sendEmail(msg) {
+  try {
+    emailjs.init({publicKey: 'V9NqLDtVaGzB173ee'});
+    emailjs.send('service_k84ebeh', 'template_232ecf8', {message: msg})
+      .then(() => toast('Parents notified by email 📧'))
+      .catch(e => {
+        console.error('EmailJS full error:', JSON.stringify(e));
+        console.error('Status:', e.status, 'Text:', e.text);
+        toast('Email failed: ' + (e.text || e.status || JSON.stringify(e)), 'err');
+      });
+  } catch(e) {
+    console.error('EmailJS exception:', e);
+    toast('Email error: ' + e.message, 'err');
+  }
+}
+
+// SETTINGS
+window.saveWA=()=>{ wa1=(document.getElementById('wan1').value||'').trim(); wa2=(document.getElementById('wan2').value||'').trim(); svO('cfg',{wa1,wa2,pin}); toast('Settings saved! ✅'); };
+window.savePIN=()=>{ const np=document.getElementById('npi').value.trim(); if(!np||np.length<4){toast('PIN must be at least 4 digits','err');return;} pin=np; svO('cfg',{wa1,wa2,pin}); document.getElementById('npi').value=''; toast('PIN saved! 🔒'); };
+
+// PIN LOCKS
+window.unlockPC=()=>{ const e=document.getElementById('pcpi').value; if(!pin||e===pin){document.getElementById('pcl').style.display='none';document.getElementById('pcu').style.display='block';document.getElementById('pcpe').style.display='none';}else{document.getElementById('pcpe').style.display='block';} document.getElementById('pcpi').value=''; };
+window.lockPC=()=>{ document.getElementById('pcl').style.display='block';document.getElementById('pcu').style.display='none'; };
+window.unlockWA=()=>{ const e=document.getElementById('wapi').value; if(!pin||e===pin){document.getElementById('wal2').style.display='none';document.getElementById('wau').style.display='block';document.getElementById('wape').style.display='none';document.getElementById('wan1').value=wa1;document.getElementById('wan2').value=wa2;}else{document.getElementById('wape').style.display='block';} document.getElementById('wapi').value=''; };
+window.lockWA=()=>{ document.getElementById('wal2').style.display='block';document.getElementById('wau').style.display='none'; };
+
+// TABS & PAGES
+window.goTab=(tab,btn)=>{ ['pt','ph3','pn'].forEach(id=>document.getElementById(id).style.display='none'); document.getElementById(tab==='tasks'?'pt':tab==='habits'?'ph3':'pn').style.display='block'; document.querySelectorAll('.it').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); };
+window.goPg=(pg,btn)=>{ document.querySelectorAll('#db-parent .pg').forEach(p=>p.classList.remove('on')); document.getElementById('pg-'+pg).classList.add('on'); document.querySelectorAll('#db-parent .ntab').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); if(pg!=='family'){lockPC();} };
+window.goKidPg=(pg,btn)=>{ document.querySelectorAll('#db-kid .pg').forEach(p=>p.classList.remove('on')); document.getElementById('kpg-'+pg).classList.add('on'); document.querySelectorAll('#db-kid .ntab').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); };
+
+// MODAL HELPERS
+window.openMo=id=>document.getElementById(id).classList.add('on');
+window.closeMo=id=>document.getElementById(id).classList.remove('on');
+['mo-rem','mo-reward','mo-wd','mo-ca'].forEach(id=>{ document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');}); });
+</script>
+</body>
+</html>
