@@ -1015,6 +1015,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-h
   </div>
 </div>
 
+<script>
+// Fallback until module loads
+window.doSignIn = function() {
+  document.getElementById('signin-btn').textContent = 'Loading...';
+  setTimeout(() => {
+    if (window._doSignInReady) window._doSignInReady();
+    else document.getElementById('signin-btn').textContent = 'Please refresh the page';
+  }, 1500);
+};
+window.doSignOut = function() { location.reload(); };
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut as fbSignOut, indexedDBLocalPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1122,6 +1133,7 @@ window.doSignIn = async () => {
     toast('Sign-in error: ' + e.code, 'err');
   }
 };
+window._doSignInReady = window.doSignIn;
 window.doSignOut = async () => await fbSignOut(auth);
 
 onAuthStateChanged(auth, user => {
