@@ -1032,29 +1032,29 @@ setPersistence(auth, indexedDBLocalPersistence).catch(e => console.log('Persiste
 const FAMILY_UID = 'bBBPgVPurfdxth5b03EZtX66VLI2';
 const PARENT_EMAILS = ['shashwat.b@gmail.com', 'ila.badoni@gmail.com'];
 const DEFAULT_TASKS = [
-  {text:'\u{1F4DA} Complete homework', done:false},
-  {text:'\u{1F3C3} Physical activity (30 mins)', done:false},
-  {text:'\u{1F957} Clean, healthy food choices', done:false},
-  {text:'\u{1F4F1} Take permission before using devices', done:false},
+  {text:'\uD83D\uDCDA Complete homework', done:false},
+  {text:'\uD83C\uDFC3 Physical activity (30 mins)', done:false},
+  {text:'\uD83E\uDD57 Clean, healthy food choices', done:false},
+  {text:'\uD83D\uDCF1 Take permission before using devices', done:false},
   {text:'\u2764\uFE0F Show kindness to staff and guards', done:false}
 ];
 const LEVELS = [
-  {name:'Rookie', emoji:'\u{1F949}', weeks:0, next:5},
-  {name:'Explorer', emoji:'\u{1F5FA}\uFE0F', weeks:5, next:10},
+  {name:'Rookie', emoji:'\uD83E\uDD49', weeks:0, next:5},
+  {name:'Explorer', emoji:'\uD83D\uDDFA\uFE0F', weeks:5, next:10},
   {name:'Warrior', emoji:'\u2694\uFE0F', weeks:10, next:20},
-  {name:'Hero', emoji:'\u{1F9B8}', weeks:20, next:30},
-  {name:'Champion', emoji:'\u{1F3C6}', weeks:30, next:null}
+  {name:'Hero', emoji:'\uD83E\uDDB8', weeks:20, next:30},
+  {name:'Champion', emoji:'\uD83C\uDFC6', weeks:30, next:null}
 ];
 const MOOD_COLORS = {great:'#34d399', good:'#a78bfa', ok:'#fbbf24', low:'#f97316', sad:'#f87171'};
-const MOOD_EMOJIS = {great:'\u{1F604}', good:'\u{1F60A}', ok:'\u{1F610}', low:'\u{1F61F}', sad:'\u{1F622}'};
+const MOOD_EMOJIS = {great:'\uD83D\uDE04', good:'\uD83D\uDE0A', ok:'\uD83D\uDE10', low:'\uD83D\uDE1F', sad:'\uD83D\uDE22'};
 
 const MOS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const DYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 let now = new Date(), cY = now.getFullYear(), cM = now.getMonth();
 let uid = null, isParent = false, kidName = '';
 let tasks=[], habits=[], notes=[], reminders=[], bills=[], energy={};
-let iT=[], iR={emoji:"\u{1F381}",name:"Complete all tasks!",sub:"Budget: \u20B91,000",value:1000};
-let selR2={emoji:"\u{1F366}",name:"Ice Cream",sub:"Any flavour, up to \u20B9300",value:300};
+let iT=[], iR={emoji:"\uD83C\uDF81",name:"Complete all tasks!",sub:"Budget: \u20B91,000",value:1000};
+let selR2={emoji:"\uD83C\uDF66",name:"Ice Cream",sub:"Any flavour, up to \u20B9300",value:300};
 let honoured=false;
 let bk={balance:0,transactions:[],pending:[]};
 let wa1='', wa2='', pin='';
@@ -1091,7 +1091,7 @@ function launchConfetti() {
 }
 
 function showApprovalBanner(item) {
-  const msgs={reward_claim:`\u{1F389} Reward approved! \u20B9${item.amount}`,withdrawal:`\u{1F4B8} Withdrawal of \u20B9${item.amount} approved!`,achievement:`\u{1F3C6} Achievement approved! \u20B9${item.amount} added!`};
+  const msgs={reward_claim:`\uD83C\uDF89 Reward approved! \u20B9${item.amount}`,withdrawal:`\uD83D\uDCB8 Withdrawal of \u20B9${item.amount} approved!`,achievement:`\uD83C\uDFC6 Achievement approved! \u20B9${item.amount} added!`};
   document.getElementById('abanner-text').textContent = msgs[item.type]||`\u2705 \u20B9${item.amount} approved!`;
   document.getElementById('abanner').classList.add('show');
   launchConfetti();
@@ -1141,7 +1141,7 @@ onAuthStateChanged(auth, user => {
       const a=document.getElementById('av-kid');
       if(user.photoURL)a.innerHTML=`<img src="${user.photoURL}">`;else a.textContent=(user.displayName||user.email[0].toUpperCase())[0];
       kidName=(user.displayName||'').split(' ')[0]||'Ishaan';
-      document.getElementById('kid-greeting').textContent=`Hey ${kidName}! \u{1F31F}`;
+      document.getElementById('kid-greeting').textContent=`Hey ${kidName}! \uD83C\uDF1F`;
     }
     listen();
     checkAutoReset();
@@ -1179,7 +1179,7 @@ function listen() {
   ['tasks','habits','notes','reminders','iT','bk','cfg','mood','photos','books','grocery','famGoals','energy'].forEach(col=>{
     onSnapshot(doc(db,"users",FAMILY_UID,col,"data"),snap=>{
       if(!snap.exists()){
-        if(col==='habits'){habits=[{id:1,name:"Meditate",done:[],emoji:"\u{1F9D8}"},{id:2,name:"Exercise",done:[],emoji:"\u{1F4AA}"},{id:3,name:"Read",done:[],emoji:"\u{1F4D6}"},{id:4,name:"Hydrate",done:[],emoji:"\u{1F4A7}"}];sv('habits',habits);}
+        if(col==='habits'){habits=[{id:1,name:"Meditate",done:[],emoji:"\uD83E\uDDD8"},{id:2,name:"Exercise",done:[],emoji:"\uD83D\uDCAA"},{id:3,name:"Read",done:[],emoji:"\uD83D\uDCD6"},{id:4,name:"Hydrate",done:[],emoji:"\uD83D\uDCA7"}];sv('habits',habits);}
         if(col==='iT'){iT=DEFAULT_TASKS.map((t,i)=>({id:Date.now()+i,...t}));svO('iT',{items:iT,reward:iR,streak:0,savingsGoal:{},lastReset:''});}
         return;
       }
@@ -1226,8 +1226,8 @@ function updStats() {
 
 function updStreak() {
   const s=streak||0;
-  const el=document.getElementById('kid-streak');if(el)el.textContent=`\u{1F525} ${s} week streak`;
-  const sel=document.getElementById('streak-display');if(sel)sel.textContent=`\u{1F525} ${s} week streak`;
+  const el=document.getElementById('kid-streak');if(el)el.textContent=`\uD83D\uDD25 ${s} week streak`;
+  const sel=document.getElementById('streak-display');if(sel)sel.textContent=`\uD83D\uDD25 ${s} week streak`;
 }
 
 function updLevel() {
@@ -1244,7 +1244,7 @@ function updLevel() {
       const nextLvl=LEVELS.find(l=>l.weeks===lvl.next);
       lnxt.textContent=`${lvl.next-s} more weeks to ${nextLvl?.name}`;
     } else {
-      lnxt.textContent='You are a Champion! \u{1F3C6}';
+      lnxt.textContent='You are a Champion! \uD83C\uDFC6';
     }
   }
 }
@@ -1349,7 +1349,7 @@ function renderEnergyChart(){
 }
 
 // REMINDERS
-const TICONS={work:'\u{1F4BC}',health:'\u{1F33F}',personal:'\u2B50',urgent:'\u26A1'};
+const TICONS={work:'\uD83D\uDCBC',health:'\uD83C\uDF3F',personal:'\u2B50',urgent:'\u26A1'};
 const TCLS={work:'rpu',health:'rbl',personal:'ram',urgent:'rrd'};
 const TCSS={work:'tw2',health:'th',personal:'tp',urgent:'tu'};
 function fmtRT(iso){const d=new Date(iso),diff=Math.round((d-new Date())/60000);if(diff<0)return'Past due';if(diff<60)return`In ${diff}m`;if(diff<1440)return`In ${Math.round(diff/60)}h`;return d.toLocaleDateString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});}
@@ -1359,7 +1359,7 @@ window.delRem=id=>{reminders=reminders.filter(r=>r.id!==id);sv('reminders',remin
 function renderRems(){
   const el=document.getElementById('rl');if(!el)return;
   if(!reminders.length){el.innerHTML='<div class="es">No upcoming reminders</div>';return;}
-  el.innerHTML=reminders.slice(0,5).map(r=>`<div class="ri2"><div class="ric ${TCLS[r.tag]||'rpu'}">${TICONS[r.tag]||'\u{1F4CC}'}</div><div class="rct"><div class="rtl">${r.title}</div><div class="rtm">${fmtRT(r.time)}</div><span class="rtg ${TCSS[r.tag]||'tw2'}">${r.tag}</span></div><button onclick="delRem(${r.id})" style="background:transparent;border:none;cursor:pointer;color:var(--t3);font-size:12px;align-self:flex-start">\u2715</button></div>`).join('');
+  el.innerHTML=reminders.slice(0,5).map(r=>`<div class="ri2"><div class="ric ${TCLS[r.tag]||'rpu'}">${TICONS[r.tag]||'\uD83D\uDCCC'}</div><div class="rct"><div class="rtl">${r.title}</div><div class="rtm">${fmtRT(r.time)}</div><span class="rtg ${TCSS[r.tag]||'tw2'}">${r.tag}</span></div><button onclick="delRem(${r.id})" style="background:transparent;border:none;cursor:pointer;color:var(--t3);font-size:12px;align-self:flex-start">\u2715</button></div>`).join('');
 }
 
 // CALENDAR
@@ -1386,7 +1386,7 @@ window.delIT=id=>{iT=iT.filter(x=>x.id!==id);svIT();};
 function svIT(){svO('iT',{items:iT,reward:iR,streak:streak||0,savingsGoal,lastReset:localStorage.getItem('flow_last_reset')||''});}
 
 window.selR=(el,emoji,name,sub,value)=>{document.querySelectorAll('.ro').forEach(o=>o.classList.remove('on'));el.classList.add('on');selR2={emoji,name,sub,value};};
-window.setCustomR=()=>{const name=document.getElementById('crn').value.trim(),emoji=document.getElementById('cre').value.trim()||'\u{1F381}',value=parseInt(document.getElementById('crv').value)||1000;if(!name)return;selR2={emoji,name,sub:`Up to \u20B9${value}`,value};document.querySelectorAll('.ro').forEach(o=>o.classList.remove('on'));document.getElementById('crn').value='';document.getElementById('cre').value='';document.getElementById('crv').value='';toast(`Reward "${name}" selected \u2705`);};
+window.setCustomR=()=>{const name=document.getElementById('crn').value.trim(),emoji=document.getElementById('cre').value.trim()||'\uD83C\uDF81',value=parseInt(document.getElementById('crv').value)||1000;if(!name)return;selR2={emoji,name,sub:`Up to \u20B9${value}`,value};document.querySelectorAll('.ro').forEach(o=>o.classList.remove('on'));document.getElementById('crn').value='';document.getElementById('cre').value='';document.getElementById('crv').value='';toast(`Reward "${name}" selected \u2705`);};
 window.saveReward=()=>{iR=selR2;svIT();updRUI();toast('Reward saved!');};
 window.resetWeek=()=>{iT=iT.map(t=>({...t,done:false}));svIT();toast('Week reset!');};
 
@@ -1430,7 +1430,7 @@ window.claimNow=()=>{
   if(!bk.pending)bk.pending=[];
   bk.pending.push({id:Date.now(),type:'reward_claim',title:`Reward: ${iR.name}`,amount:amt,status:'pending',date:new Date().toISOString()});
   svO('bk',bk);
-  sendEmail(`\u{1F389} ${kidName} completed all weekly tasks! Wants to claim: ${iR.name} (\u20B9${amt}). Approve at: https://shashwatbadoni.github.io/flow`);
+  sendEmail(`\uD83C\uDF89 ${kidName} completed all weekly tasks! Wants to claim: ${iR.name} (\u20B9${amt}). Approve at: https://shashwatbadoni.github.io/flow`);
   closeMo('mo-reward');
   setTimeout(()=>goKidPg('bank',document.querySelectorAll('#db-kid .ntab')[4]),800);
 };
@@ -1440,9 +1440,9 @@ window.bankIt=()=>{
   if(!bk.transactions)bk.transactions=[];
   if(!bk.balance)bk.balance=0;
   bk.balance+=amt;
-  bk.transactions.unshift({id:Date.now(),type:'in',emoji:'\u{1F3C6}',title:`Banked reward: ${iR.name}`,amount:amt,date:new Date().toISOString(),status:'approved'});
+  bk.transactions.unshift({id:Date.now(),type:'in',emoji:'\uD83C\uDFC6',title:`Banked reward: ${iR.name}`,amount:amt,date:new Date().toISOString(),status:'approved'});
   svO('bk',bk);
-  toast(`\u20B9${amt} banked! \u{1F3E6} Balance: \u20B9${bk.balance}`);
+  toast(`\u20B9${amt} banked! \uD83C\uDFE6 Balance: \u20B9${bk.balance}`);
   closeMo('mo-reward');
   setTimeout(()=>goKidPg('bank',document.querySelectorAll('#db-kid .ntab')[4]),800);
 };
@@ -1455,7 +1455,7 @@ function renderBank(){
   document.getElementById('bte').textContent=txns.filter(t=>t.type==='in'&&t.status==='approved').reduce((a,t)=>a+t.amount,0);
   document.getElementById('btw').textContent=txns.filter(t=>t.type==='out'&&t.status==='approved').reduce((a,t)=>a+t.amount,0);
   document.getElementById('btp').textContent=(bk.pending||[]).filter(p=>p.status==='pending').reduce((a,p)=>a+p.amount,0);
-  const txHTML=txns.length?txns.slice(0,20).map(t=>`<div class="ti2"><div class="tic ${t.type==='in'?'tin':'tout'}">${t.emoji||'\u{1F4B0}'}</div><div class="tit"><div class="titl">${t.title}</div><div class="titm">${new Date(t.date).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'})}</div></div><div class="tia ${t.type==='in'?'in':'out'}">${t.type==='in'?'+':'-'}\u20B9${t.amount}</div></div>`).join(''):'<div class="es">No transactions yet</div>';
+  const txHTML=txns.length?txns.slice(0,20).map(t=>`<div class="ti2"><div class="tic ${t.type==='in'?'tin':'tout'}">${t.emoji||'\uD83D\uDCB0'}</div><div class="tit"><div class="titl">${t.title}</div><div class="titm">${new Date(t.date).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'})}</div></div><div class="tia ${t.type==='in'?'in':'out'}">${t.type==='in'?'+':'-'}\u20B9${t.amount}</div></div>`).join(''):'<div class="es">No transactions yet</div>';
   ['txl','kid-txl'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML=txHTML;});
   const pend=(bk.pending||[]).filter(p=>p.status==='pending');
   const psec=document.getElementById('psec');if(psec)psec.style.display=pend.length?'block':'none';
@@ -1464,7 +1464,7 @@ function renderBank(){
   updSavingsGoal();
 }
 
-window.approve=id=>{const p=(bk.pending||[]).find(x=>x.id===id);if(!p||p.status!=='pending'){toast('Already handled!','err');return;}p.status='approved';if(!bk.transactions)bk.transactions=[];if(p.type==='achievement'){bk.balance=(bk.balance||0)+p.amount;bk.transactions.unshift({id:Date.now(),type:'in',emoji:'\u2705',title:p.title,amount:p.amount,date:new Date().toISOString(),status:'approved'});}else if(p.type==='withdrawal'||p.type==='reward_claim'){bk.balance=Math.max(0,(bk.balance||0)-p.amount);bk.transactions.unshift({id:Date.now(),type:'out',emoji:'\u{1F4B8}',title:p.title,amount:p.amount,date:new Date().toISOString(),status:'approved'});}svO('bk',bk);toast('Approved!');};
+window.approve=id=>{const p=(bk.pending||[]).find(x=>x.id===id);if(!p||p.status!=='pending'){toast('Already handled!','err');return;}p.status='approved';if(!bk.transactions)bk.transactions=[];if(p.type==='achievement'){bk.balance=(bk.balance||0)+p.amount;bk.transactions.unshift({id:Date.now(),type:'in',emoji:'\u2705',title:p.title,amount:p.amount,date:new Date().toISOString(),status:'approved'});}else if(p.type==='withdrawal'||p.type==='reward_claim'){bk.balance=Math.max(0,(bk.balance||0)-p.amount);bk.transactions.unshift({id:Date.now(),type:'out',emoji:'\uD83D\uDCB8',title:p.title,amount:p.amount,date:new Date().toISOString(),status:'approved'});}svO('bk',bk);toast('Approved!');};
 window.reject2=id=>{const p=(bk.pending||[]).find(x=>x.id===id);if(p)p.status='rejected';svO('bk',bk);toast('Rejected');};
 window.openWD=()=>{document.getElementById('wdamt').value='';document.getElementById('wdreason').value='';openMo('mo-wd');};
 window.subWD=()=>{
@@ -1475,11 +1475,11 @@ window.subWD=()=>{
   if(!bk.pending)bk.pending=[];
   bk.pending.push({id:Date.now(),type:'withdrawal',title:`Withdrawal: ${reason}`,amount:amt,status:'pending',date:new Date().toISOString()});
   svO('bk',bk);
-  sendEmail(`\u{1F4B8} ${kidName} wants to withdraw \u20B9${amt} for: "${reason}". Balance: \u20B9${bk.balance}. Approve at: https://shashwatbadoni.github.io/flow`);
+  sendEmail(`\uD83D\uDCB8 ${kidName} wants to withdraw \u20B9${amt} for: "${reason}". Balance: \u20B9${bk.balance}. Approve at: https://shashwatbadoni.github.io/flow`);
   closeMo('mo-wd');
   toast('Request sent! Parents notified');
 };
-window.subAch=(emoji,name,amount)=>{if(!bk.pending)bk.pending=[];bk.pending.push({id:Date.now(),type:'achievement',title:`${emoji} ${name}`,amount,status:'pending',date:new Date().toISOString()});svO('bk',bk);sendEmail(`\u{1F3C6} ${kidName} completed: "${name}" \u2014 requesting \u20B9${amount}. Approve at: https://shashwatbadoni.github.io/flow`);toast(`"${name}" submitted! Parents notified \u{1F4E7}`);};
+window.subAch=(emoji,name,amount)=>{if(!bk.pending)bk.pending=[];bk.pending.push({id:Date.now(),type:'achievement',title:`${emoji} ${name}`,amount,status:'pending',date:new Date().toISOString()});svO('bk',bk);sendEmail(`\uD83C\uDFC6 ${kidName} completed: "${name}" \u2014 requesting \u20B9${amount}. Approve at: https://shashwatbadoni.github.io/flow`);toast(`"${name}" submitted! Parents notified \uD83D\uDCE7`);};
 window.openCA=()=>{document.getElementById('can').value='';document.getElementById('caa').value='';openMo('mo-ca');};
 window.subCA=()=>{const name=document.getElementById('can').value.trim(),amt=parseInt(document.getElementById('caa').value);if(!name||!amt){toast('Fill both fields','err');return;}subAch('\u2728',name,amt);closeMo('mo-ca');};
 
@@ -1605,7 +1605,7 @@ function renderPhotos(){
       <div class="photo-date">${new Date(p.date).toLocaleDateString('en',{month:'short',day:'numeric'})}${p.caption?` \u00B7 ${p.caption.slice(0,15)}${p.caption.length>15?'\u2026':''}`:''}</div>
     </div>`).join('');
     if(id==='kid-photo-grid'){
-      el.innerHTML=`<div class="photo-upload" onclick="document.getElementById('photo-input').click()"><span>\u{1F4F7}</span><p>Add today's photo</p></div>`+items;
+      el.innerHTML=`<div class="photo-upload" onclick="document.getElementById('photo-input').click()"><span>\uD83D\uDCF7</span><p>Add today's photo</p></div>`+items;
     } else {
       el.innerHTML=items||'<div class="es" style="grid-column:1/-1">No photos yet</div>';
     }
@@ -1642,7 +1642,7 @@ window.addBook=()=>{
 function renderBooks(){
   const el=document.getElementById('book-list');if(!el)return;
   if(!bookData.length){el.innerHTML='<div class="es">No books yet \u2014 add your first one!</div>';return;}
-  el.innerHTML=bookData.map(b=>`<div class="book-item"><div class="book-cover">\u{1F4D6}</div><div class="book-info"><div class="book-title">${b.title}</div>${b.author?`<div class="book-meta">by ${b.author}</div>`:''}<div class="book-stars">${'\u2B50'.repeat(b.rating||0)}${'\u2606'.repeat(5-(b.rating||0))}</div></div><div style="font-size:11px;color:var(--t3)">${new Date(b.date).toLocaleDateString('en',{month:'short',day:'numeric'})}</div></div>`).join('');
+  el.innerHTML=bookData.map(b=>`<div class="book-item"><div class="book-cover">\uD83D\uDCD6</div><div class="book-info"><div class="book-title">${b.title}</div>${b.author?`<div class="book-meta">by ${b.author}</div>`:''}<div class="book-stars">${'\u2B50'.repeat(b.rating||0)}${'\u2606'.repeat(5-(b.rating||0))}</div></div><div style="font-size:11px;color:var(--t3)">${new Date(b.date).toLocaleDateString('en',{month:'short',day:'numeric'})}</div></div>`).join('');
 }
 
 // GROCERY
@@ -1659,11 +1659,11 @@ window.delGrocery=id=>{groceryData=groceryData.filter(x=>x.id!==id);sv('grocery'
 function renderGrocery(){
   const el=document.getElementById('grocery-list');if(!el)return;
   if(!groceryData.length){el.innerHTML='<div class="es">List is empty \u2014 add items above!</div>';return;}
-  const whoMap={family:'\u{1F468}\u200D\u{1F469}\u200D\u{1F466}',me:'\u{1F464}',ishaan:'\u2B50'};
+  const whoMap={family:'\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC66',me:'\uD83D\uDC64',ishaan:'\u2B50'};
   el.innerHTML=groceryData.map(g=>`<div class="fam-item ${g.done?'dn':''}">
     <div class="ck ${g.done?'on':''}" onclick="togGrocery(${g.id})"><svg class="cksv" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     <span class="fam-text">${g.text}</span>
-    <span class="fam-who">${whoMap[g.who]||'\u{1F464}'}</span>
+    <span class="fam-who">${whoMap[g.who]||'\uD83D\uDC64'}</span>
     <button onclick="delGrocery(${g.id})" style="background:transparent;border:none;cursor:pointer;color:var(--t3);font-size:12px;opacity:0.5">\u2715</button>
   </div>`).join('');
 }
@@ -1703,7 +1703,7 @@ function initSnakeCanvas(){
   const ctx=canvas.getContext('2d');
   ctx.fillStyle='#0a0d1a';ctx.fillRect(0,0,300,300);
   ctx.fillStyle='rgba(255,255,255,0.1)';ctx.font='16px DM Sans';
-  ctx.textAlign='center';ctx.fillText('Press Start to play \u{1F40D}',150,150);
+  ctx.textAlign='center';ctx.fillText('Press Start to play \uD83D\uDC0D',150,150);
   document.getElementById('snake-best').textContent=snakeBest;
 }
 window.startSnake=()=>{
@@ -1714,7 +1714,7 @@ window.startSnake=()=>{
   let snake=[{x:7,y:7}],dir={x:1,y:0},nextDir={x:1,y:0},food=spawnFood(snake,GRID),score=0,running=true;
   document.getElementById('snake-score').textContent=0;
   document.getElementById('snake-msg').textContent='Use arrows or swipe to move!';
-  document.getElementById('snake-start-btn').textContent='\u{1F504} Restart';
+  document.getElementById('snake-start-btn').textContent='\uD83D\uDD04 Restart';
 
   function spawnFood(s,g){let f;do{f={x:Math.floor(Math.random()*g),y:Math.floor(Math.random()*g)};}while(s.some(p=>p.x===f.x&&p.y===f.y));return f;}
 
@@ -1755,11 +1755,11 @@ window.startSnake=()=>{
   function gameOver(){
     running=false;stopSnake();
     ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,300,300);
-    ctx.fillStyle='#f87171';ctx.font='bold 20px Syne';ctx.textAlign='center';ctx.fillText('Game Over! \u{1F480}',150,130);
+    ctx.fillStyle='#f87171';ctx.font='bold 20px Syne';ctx.textAlign='center';ctx.fillText('Game Over! \uD83D\uDC80',150,130);
     ctx.fillStyle='#fbbf24';ctx.font='16px DM Sans';ctx.fillText(`Score: ${score}`,150,160);
     ctx.fillStyle='#a0a8c8';ctx.font='13px DM Sans';ctx.fillText('Press Restart to play again',150,190);
     document.getElementById('snake-msg').textContent=`Game over! Score: ${score}`;
-    document.getElementById('snake-start-btn').textContent='\u{1F504} Restart';
+    document.getElementById('snake-start-btn').textContent='\uD83D\uDD04 Restart';
     if(score>=5)launchConfetti();
   }
 
@@ -1905,9 +1905,9 @@ function endQuiz(){
   document.getElementById('quiz-area').style.display='none';
   document.getElementById('quiz-result').style.display='block';
   const pct=Math.round(quizScore/10*100);
-  const emoji=pct>=90?'\u{1F3C6}':pct>=70?'\u{1F389}':pct>=50?'\u{1F60A}':'\u{1F4AA}';
+  const emoji=pct>=90?'\uD83C\uDFC6':pct>=70?'\uD83C\uDF89':pct>=50?'\uD83D\uDE0A':'\uD83D\uDCAA';
   const title=pct>=90?'Perfect Score!':pct>=70?'Great Job!':pct>=50?'Good Try!':'Keep Practising!';
-  const msg=pct>=90?'You got everything right! You are a genius! \u{1F9E0}':pct>=70?'Really impressive knowledge!':pct>=50?'More than half right \u2014 well done!':'Every attempt makes you smarter!';
+  const msg=pct>=90?'You got everything right! You are a genius! \uD83E\uDDE0':pct>=70?'Really impressive knowledge!':pct>=50?'More than half right \u2014 well done!':'Every attempt makes you smarter!';
   document.getElementById('result-emoji').textContent=emoji;
   document.getElementById('result-title').textContent=title;
   document.getElementById('result-score').textContent=`You scored ${quizScore}/10 (${pct}%)`;
@@ -1924,7 +1924,7 @@ function endQuiz(){
 
 function sendWeeklySummary(){
   const done=iT.filter(t=>t.done).length,total=iT.length;
-  const msg=`\u{1F4CA} Weekly Summary for ${kidName}:\n\n\u2705 Tasks completed: ${done}/${total}\n\u{1F525} Streak: ${streak} weeks\n\u{1F3E6} Bank balance: \u20B9${bk.balance||0}\n\u{1F4F8} Photos this week: ${photoData.filter(p=>{const d=new Date(p.date);const weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);return d>=weekAgo;}).length}\n\nView at: https://shashwatbadoni.github.io/flow`;
+  const msg=`\uD83D\uDCCA Weekly Summary for ${kidName}:\n\n\u2705 Tasks completed: ${done}/${total}\n\uD83D\uDD25 Streak: ${streak} weeks\n\uD83C\uDFE6 Bank balance: \u20B9${bk.balance||0}\n\uD83D\uDCF8 Photos this week: ${photoData.filter(p=>{const d=new Date(p.date);const weekAgo=new Date(now);weekAgo.setDate(weekAgo.getDate()-7);return d>=weekAgo;}).length}\n\nView at: https://shashwatbadoni.github.io/flow`;
   sendEmail(msg);
 }
 
