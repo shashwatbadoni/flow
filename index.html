@@ -1015,17 +1015,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-h
   </div>
 </div>
 
-<script>
-// Fallback until module loads
-window.doSignIn = function() {
-  document.getElementById('signin-btn').textContent = 'Loading...';
-  setTimeout(() => {
-    if (window._doSignInReady) window._doSignInReady();
-    else document.getElementById('signin-btn').textContent = 'Please refresh the page';
-  }, 1500);
-};
-window.doSignOut = function() { location.reload(); };
-</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut as fbSignOut, indexedDBLocalPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1133,7 +1122,6 @@ window.doSignIn = async () => {
     toast('Sign-in error: ' + e.code, 'err');
   }
 };
-window._doSignInReady = window.doSignIn;
 window.doSignOut = async () => await fbSignOut(auth);
 
 onAuthStateChanged(auth, user => {
@@ -1743,7 +1731,7 @@ window.startSnake=()=>{
       const t=1-i/snake.length;
       ctx.fillStyle=`rgba(${Math.round(52+t*72)},${Math.round(211-t*80)},${Math.round(153-t*50)},${0.7+t*0.3})`;
       ctx.shadowColor='#34d399';ctx.shadowBlur=i===0?6:0;
-      ctx.beginPath();ctx.roundRect(p.x*CELL+1,p.y*CELL+1,CELL-2,CELL-2,3);ctx.fill();
+      ctx.beginPath();ctx.fillRect(p.x*CELL+1,p.y*CELL+1,CELL-2,CELL-2);
     });
     ctx.shadowBlur=0;
   }
