@@ -1019,13 +1019,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-h
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut as fbSignOut, indexedDBLocalPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const FB = { apiKey:"AIzaSyAYit-D2L4WL9EGyxIoLj3XmIlnVFQWgiQ", authDomain:"flow-dashboard-83f95.firebaseapp.com", projectId:"flow-dashboard-83f95", storageBucket:"flow-dashboard-83f95.firebasestorage.app", messagingSenderId:"397280852022", appId:"1:397280852022:web:e015175ca72fa66fe20097" };
 const app = initializeApp(FB);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 const prov = new GoogleAuthProvider();
 prov.setCustomParameters({ prompt: 'select_account' });
 auth.useDeviceLanguage();
