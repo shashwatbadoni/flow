@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#0d0f1a"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="Flow"/>
-<title>Flow — Family Dashboard</title>
+<meta name="apple-mobile-web-app-title" content="OurSpace"/>
+<title>OurSpace — Family Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
@@ -329,7 +329,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-h
 <!-- LOGIN -->
 <div id="ls">
   <div class="lc">
-    <div class="ll">Flow ✦</div>
+    <div class="ll">OurSpace ✦</div>
     <div class="ls2">Your family productivity dashboard.<br/>Sign in to get started.</div>
     <button class="gbtn" id="signin-btn" onclick="doSignIn()">
       <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
@@ -341,7 +341,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-h
 <!-- PARENT DASHBOARD -->
 <div id="db-parent" style="display:none">
   <nav class="nav">
-    <div class="nl">Flow</div>
+    <div class="nl">OurSpace</div>
     <div class="ntabs">
       <button class="ntab on" onclick="goPg('my',this)">Dashboard</button>
       <button class="ntab" onclick="goPg('family',this)">👨‍👩‍👦 Family</button>
@@ -697,13 +697,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-h
 <!-- KID DASHBOARD -->
 <div id="db-kid" style="display:none">
   <nav class="nav">
-    <div class="nl">Flow ✦</div>
+    <div class="nl">OurSpace ✦</div>
     <div class="ntabs">
       <button class="ntab on" onclick="goKidPg('tasks',this)">🌟 Tasks</button>
       <button class="ntab" onclick="goKidPg('mood',this)">😊 Mood</button>
       <button class="ntab" onclick="goKidPg('photos',this)">📸 Photos</button>
       <button class="ntab" onclick="goKidPg('books',this)">📚 Books</button>
       <button class="ntab" onclick="goKidPg('bank',this)">🏦 Bank</button>
+      <button class="ntab" id="game-tab" onclick="goKidPg('game',this)">🎮 Game</button>
     </div>
     <div class="nr">
       <button class="sob" onclick="doSignOut()">Sign out</button>
@@ -867,9 +868,90 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-h
       <div id="kid-txl"><div class="es">No transactions yet</div></div>
     </div>
   </div>
+  <!-- KID GAME -->
+  <div id="kpg-game" class="pg" style="max-width:600px;margin:0 auto;display:none">
+    <div id="game-locked" class="g pp" style="text-align:center;padding:40px 20px">
+      <div style="font-size:52px;margin-bottom:12px">🔒</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px;color:var(--a2)">Games Locked!</h2>
+      <p style="font-size:14px;color:var(--t2);line-height:1.6">Complete all your weekly tasks to unlock the games! 🌟</p>
+      <div style="margin-top:16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.2);border-radius:10px;padding:12px 16px">
+        <div class="wpb"><div class="wpf" id="game-prog" style="width:0%"></div></div>
+        <div style="font-size:13px;font-weight:700;color:var(--warn)" id="game-pct">0%</div>
+      </div>
+    </div>
+    <div id="game-unlocked" style="display:none">
+      <!-- GAME PICKER -->
+      <div id="game-picker" class="g pp" style="margin-bottom:16px">
+        <div class="sl">Choose Your Game 🎮</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div onclick="showGame('quiz')" style="background:linear-gradient(135deg,rgba(124,110,247,0.15),rgba(167,139,250,0.1));border:1px solid rgba(124,110,247,0.3);border-radius:12px;padding:20px;text-align:center;cursor:pointer">
+            <div style="font-size:36px;margin-bottom:8px">🧠</div>
+            <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--a2)">Quiz Game</div>
+            <div style="font-size:11px;color:var(--t3);margin-top:3px">10 questions</div>
+          </div>
+          <div onclick="showGame('snake')" style="background:linear-gradient(135deg,rgba(52,211,153,0.15),rgba(5,150,105,0.1));border:1px solid rgba(52,211,153,0.3);border-radius:12px;padding:20px;text-align:center;cursor:pointer">
+            <div style="font-size:36px;margin-bottom:8px">🐍</div>
+            <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--ok)">Snake Game</div>
+            <div style="font-size:11px;color:var(--t3);margin-top:3px">Classic snake</div>
+          </div>
+        </div>
+      </div>
+      <!-- QUIZ -->
+      <div id="game-quiz" style="display:none">
+        <div class="g pp" style="margin-bottom:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <button onclick="showGame('picker')" style="background:rgba(0,0,0,0.2);border:1px solid var(--gb);border-radius:8px;padding:6px 12px;color:var(--t2);font-size:12px;cursor:pointer">← Back</button>
+            <div style="display:flex;gap:16px">
+              <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--ok)" id="quiz-score">0</div><div style="font-size:10px;color:var(--t2)">Score</div></div>
+              <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--warn)" id="quiz-qnum">1/10</div><div style="font-size:10px;color:var(--t2)">Question</div></div>
+              <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--a3)" id="quiz-timer">15</div><div style="font-size:10px;color:var(--t2)">Secs</div></div>
+            </div>
+          </div>
+          <div id="quiz-area">
+            <div id="quiz-question" style="font-size:15px;font-weight:600;line-height:1.5;margin-bottom:16px;min-height:50px"></div>
+            <div id="quiz-options" style="display:flex;flex-direction:column;gap:8px"></div>
+            <div id="quiz-feedback" style="display:none;margin-top:12px;padding:11px;border-radius:10px;font-size:14px;font-weight:600;text-align:center"></div>
+          </div>
+          <div id="quiz-result" style="display:none;text-align:center;padding:20px 0">
+            <div style="font-size:44px;margin-bottom:10px" id="result-emoji">🎉</div>
+            <h2 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--warn);margin-bottom:4px" id="result-title">Great job!</h2>
+            <p style="font-size:13px;color:var(--t2);margin-bottom:4px" id="result-score"></p>
+            <p style="font-size:12px;color:var(--t3)" id="result-msg"></p>
+            <button class="ab" onclick="startQuiz()" style="margin-top:14px;padding:11px 24px">🔄 Play Again</button>
+          </div>
+        </div>
+      </div>
+      <!-- SNAKE -->
+      <div id="game-snake" style="display:none">
+        <div class="g pp">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <button onclick="showGame('picker');stopSnake()" style="background:rgba(0,0,0,0.2);border:1px solid var(--gb);border-radius:8px;padding:6px 12px;color:var(--t2);font-size:12px;cursor:pointer">← Back</button>
+            <div style="display:flex;gap:16px">
+              <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--ok)" id="snake-score">0</div><div style="font-size:10px;color:var(--t2)">Score</div></div>
+              <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--warn)" id="snake-best">0</div><div style="font-size:10px;color:var(--t2)">Best</div></div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:center;margin-bottom:12px">
+            <canvas id="snake-canvas" width="300" height="300" style="border-radius:10px;border:1px solid var(--gb);background:#0a0d1a;touch-action:none"></canvas>
+          </div>
+          <div id="snake-msg" style="text-align:center;margin-bottom:10px;font-size:14px;color:var(--t2)">Tap Start to play!</div>
+          <button id="snake-start-btn" class="ab" onclick="startSnake()" style="width:100%;padding:11px">🐍 Start Game</button>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:12px;max-width:160px;margin-left:auto;margin-right:auto">
+            <div></div>
+            <button onclick="setSnakeDir(0,-1)" style="background:rgba(255,255,255,0.08);border:1px solid var(--gb);border-radius:8px;padding:10px;font-size:16px;cursor:pointer">▲</button>
+            <div></div>
+            <button onclick="setSnakeDir(-1,0)" style="background:rgba(255,255,255,0.08);border:1px solid var(--gb);border-radius:8px;padding:10px;font-size:16px;cursor:pointer">◀</button>
+            <button onclick="startSnake()" style="background:rgba(124,110,247,0.2);border:1px solid rgba(124,110,247,0.3);border-radius:8px;padding:10px;font-size:12px;cursor:pointer">GO</button>
+            <button onclick="setSnakeDir(1,0)" style="background:rgba(255,255,255,0.08);border:1px solid var(--gb);border-radius:8px;padding:10px;font-size:16px;cursor:pointer">▶</button>
+            <div></div>
+            <button onclick="setSnakeDir(0,1)" style="background:rgba(255,255,255,0.08);border:1px solid var(--gb);border-radius:8px;padding:10px;font-size:16px;cursor:pointer">▼</button>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<!-- MODALS -->
 <div class="mo" id="mo-rem">
   <div class="md">
     <div class="mdt">New Reminder</div>
@@ -935,7 +1017,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-h
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut as fbSignOut, indexedDBLocalPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut as fbSignOut, indexedDBLocalPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
@@ -1035,13 +1117,11 @@ window.doSignIn = async () => {
   btn.textContent = 'Signing in...'; btn.style.opacity='0.7'; btn.style.pointerEvents='none';
   try {
     await setPersistence(auth, indexedDBLocalPersistence);
-    if(isStandalone()) { await signInWithRedirect(auth, prov); }
-    else { await signInWithPopup(auth, prov); }
+    await signInWithRedirect(auth, prov);
   } catch(e) {
     btn.innerHTML=`<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.36-8.16 2.36-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg> Continue with Google`;
     btn.style.opacity='1'; btn.style.pointerEvents='auto';
-    if(e.code==='auth/popup-blocked') toast('Popup blocked — please allow popups', 'err');
-    else if(e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request') toast('Sign-in error: '+e.code, 'err');
+    toast('Sign-in error: ' + e.code, 'err');
   }
 };
 window.doSignOut = async () => await fbSignOut(auth);
@@ -1331,6 +1411,7 @@ function updIS(){
   const kp=document.getElementById('kid-pct');if(kp)kp.textContent=pct+'%';
   const ibp=document.getElementById('ibp');if(ibp)ibp.textContent=pct+'%';
   const itc=document.getElementById('itc');if(itc)itc.textContent=`${done} of ${total} done`;
+  checkGameUnlock();
 }
 
 // REWARD MODAL
@@ -1609,8 +1690,232 @@ function renderFamGoals(){
   </div>`).join('');
 }
 
-// EMAIL
-function sendEmail(msg){
+window.showGame=type=>{
+  ['game-picker','game-quiz','game-snake'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
+  if(type==='picker'){const e=document.getElementById('game-picker');if(e)e.style.display='block';}
+  else if(type==='quiz'){const e=document.getElementById('game-quiz');if(e)e.style.display='block';startQuiz();}
+  else if(type==='snake'){const e=document.getElementById('game-snake');if(e)e.style.display='block';initSnakeCanvas();}
+};
+
+// SNAKE GAME
+let snakeGame=null,snakeBest=parseInt(localStorage.getItem('snakeBest')||'0');
+function initSnakeCanvas(){
+  const canvas=document.getElementById('snake-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0a0d1a';ctx.fillRect(0,0,300,300);
+  ctx.fillStyle='rgba(255,255,255,0.1)';ctx.font='16px DM Sans';
+  ctx.textAlign='center';ctx.fillText('Press Start to play 🐍',150,150);
+  document.getElementById('snake-best').textContent=snakeBest;
+}
+window.startSnake=()=>{
+  stopSnake();
+  const canvas=document.getElementById('snake-canvas');if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const GRID=15,CELL=Math.floor(300/GRID);
+  let snake=[{x:7,y:7}],dir={x:1,y:0},nextDir={x:1,y:0},food=spawnFood(snake,GRID),score=0,running=true;
+  document.getElementById('snake-score').textContent=0;
+  document.getElementById('snake-msg').textContent='Use arrows or swipe to move!';
+  document.getElementById('snake-start-btn').textContent='🔄 Restart';
+
+  function spawnFood(s,g){let f;do{f={x:Math.floor(Math.random()*g),y:Math.floor(Math.random()*g)};}while(s.some(p=>p.x===f.x&&p.y===f.y));return f;}
+
+  function draw(){
+    ctx.fillStyle='#0a0d1a';ctx.fillRect(0,0,300,300);
+    // Draw grid
+    ctx.strokeStyle='rgba(255,255,255,0.03)';ctx.lineWidth=0.5;
+    for(let i=0;i<GRID;i++){ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,300);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(300,i*CELL);ctx.stroke();}
+    // Food
+    ctx.fillStyle='#f59e0b';ctx.shadowColor='#f59e0b';ctx.shadowBlur=8;
+    ctx.beginPath();ctx.arc(food.x*CELL+CELL/2,food.y*CELL+CELL/2,CELL/2-1,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+    // Snake
+    snake.forEach((p,i)=>{
+      const t=1-i/snake.length;
+      ctx.fillStyle=`rgba(${Math.round(52+t*72)},${Math.round(211-t*80)},${Math.round(153-t*50)},${0.7+t*0.3})`;
+      ctx.shadowColor='#34d399';ctx.shadowBlur=i===0?6:0;
+      ctx.beginPath();ctx.roundRect(p.x*CELL+1,p.y*CELL+1,CELL-2,CELL-2,3);ctx.fill();
+    });
+    ctx.shadowBlur=0;
+  }
+
+  function step(){
+    if(!running)return;
+    dir=nextDir;
+    const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+    if(head.x<0||head.x>=GRID||head.y<0||head.y>=GRID||snake.some(p=>p.x===head.x&&p.y===head.y)){
+      gameOver();return;
+    }
+    snake.unshift(head);
+    if(head.x===food.x&&head.y===food.y){
+      score++;document.getElementById('snake-score').textContent=score;
+      food=spawnFood(snake,GRID);
+      if(score>snakeBest){snakeBest=score;localStorage.setItem('snakeBest',snakeBest);document.getElementById('snake-best').textContent=snakeBest;}
+    }else{snake.pop();}
+    draw();
+  }
+
+  function gameOver(){
+    running=false;stopSnake();
+    ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,300,300);
+    ctx.fillStyle='#f87171';ctx.font='bold 20px Syne';ctx.textAlign='center';ctx.fillText('Game Over! 💀',150,130);
+    ctx.fillStyle='#fbbf24';ctx.font='16px DM Sans';ctx.fillText(`Score: ${score}`,150,160);
+    ctx.fillStyle='#a0a8c8';ctx.font='13px DM Sans';ctx.fillText('Press Restart to play again',150,190);
+    document.getElementById('snake-msg').textContent=`Game over! Score: ${score}`;
+    document.getElementById('snake-start-btn').textContent='🔄 Restart';
+    if(score>=5)launchConfetti();
+  }
+
+  snakeGame=setInterval(step,150);
+
+  // Keyboard controls
+  const keyHandler=e=>{
+    if(e.key==='ArrowUp'&&dir.y!==1)nextDir={x:0,y:-1};
+    else if(e.key==='ArrowDown'&&dir.y!==-1)nextDir={x:0,y:1};
+    else if(e.key==='ArrowLeft'&&dir.x!==1)nextDir={x:-1,y:0};
+    else if(e.key==='ArrowRight'&&dir.x!==-1)nextDir={x:1,y:0};
+  };
+  document.addEventListener('keydown',keyHandler);
+
+  // Touch/swipe controls
+  let tx=0,ty=0;
+  canvas.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+  canvas.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>Math.abs(dy)){if(dx>20&&dir.x!==-1)nextDir={x:1,y:0};else if(dx<-20&&dir.x!==1)nextDir={x:-1,y:0};}
+    else{if(dy>20&&dir.y!==-1)nextDir={x:0,y:1};else if(dy<-20&&dir.y!==1)nextDir={x:0,y:-1};}
+  },{passive:true});
+
+  draw();
+};
+window.stopSnake=()=>{if(snakeGame){clearInterval(snakeGame);snakeGame=null;}};
+window.setSnakeDir=(dx,dy)=>{
+  // Will be applied on next step via nextDir - we expose this for button controls
+  const canvas=document.getElementById('snake-canvas');if(!canvas||!snakeGame)return;
+  // Dispatch as if keyboard
+  const keys={'-1,0':'ArrowLeft','1,0':'ArrowRight','0,-1':'ArrowUp','0,1':'ArrowDown'};
+  document.dispatchEvent(new KeyboardEvent('keydown',{key:keys[`${dx},${dy}`]}));
+};
+const QUESTIONS = [
+  {q:"What is the largest planet in our solar system?",opts:["Earth","Jupiter","Saturn","Mars"],ans:1},
+  {q:"How many continents are there on Earth?",opts:["5","6","7","8"],ans:2},
+  {q:"What is the capital of France?",opts:["London","Berlin","Paris","Rome"],ans:2},
+  {q:"Which animal is the fastest on land?",opts:["Lion","Cheetah","Horse","Leopard"],ans:1},
+  {q:"How many sides does a hexagon have?",opts:["5","6","7","8"],ans:1},
+  {q:"What is the largest ocean on Earth?",opts:["Atlantic","Indian","Arctic","Pacific"],ans:3},
+  {q:"Which planet is known as the Red Planet?",opts:["Venus","Mars","Jupiter","Saturn"],ans:1},
+  {q:"What is 12 × 12?",opts:["124","144","134","114"],ans:1},
+  {q:"Which is the longest river in the world?",opts:["Amazon","Nile","Yangtze","Mississippi"],ans:1},
+  {q:"What gas do plants absorb from the air?",opts:["Oxygen","Nitrogen","Carbon Dioxide","Hydrogen"],ans:2},
+  {q:"How many bones are in the human body?",opts:["106","206","306","406"],ans:1},
+  {q:"What is the capital of India?",opts:["Mumbai","Kolkata","New Delhi","Chennai"],ans:2},
+  {q:"Which is the smallest country in the world?",opts:["Monaco","Vatican City","San Marino","Liechtenstein"],ans:1},
+  {q:"How many colors are in a rainbow?",opts:["5","6","7","8"],ans:2},
+  {q:"What is the currency of Japan?",opts:["Yuan","Won","Yen","Ringgit"],ans:2},
+  {q:"Which ocean is the Titanic resting in?",opts:["Pacific","Indian","Atlantic","Arctic"],ans:2},
+  {q:"What is the square root of 64?",opts:["6","7","8","9"],ans:2},
+  {q:"Which sport uses a shuttlecock?",opts:["Tennis","Badminton","Squash","Pickle ball"],ans:1},
+  {q:"What is the national animal of India?",opts:["Lion","Elephant","Tiger","Leopard"],ans:2},
+  {q:"How many hours are in a week?",opts:["148","158","168","178"],ans:2}
+];
+
+let quizQs=[], quizIdx=0, quizScore=0, quizTimer=null, quizTimeLeft=15, quizAnswered=false;
+
+function checkGameUnlock(){
+  const total=iT.length,done=iT.filter(t=>t.done).length,allDone=total>0&&done===total;
+  const locked=document.getElementById('game-locked'),unlocked=document.getElementById('game-unlocked');
+  const gp=document.getElementById('game-prog'),gpct=document.getElementById('game-pct');
+  const pct=total?Math.round(done/total*100):0;
+  if(gp)gp.style.width=pct+'%';if(gpct)gpct.textContent=pct+'%';
+  if(locked&&unlocked){
+    if(allDone){
+      locked.style.display='none';unlocked.style.display='block';
+      // Show picker by default
+      const picker=document.getElementById('game-picker');
+      if(picker&&picker.style.display==='none'){
+        ['game-quiz','game-snake'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});
+        picker.style.display='block';
+      }
+    }else{locked.style.display='block';unlocked.style.display='none';}
+  }
+}
+
+window.startQuiz=()=>{
+  quizQs=[...QUESTIONS].sort(()=>Math.random()-0.5).slice(0,10);
+  quizIdx=0;quizScore=0;quizAnswered=false;
+  document.getElementById('quiz-result').style.display='none';
+  document.getElementById('quiz-area').style.display='block';
+  showQuestion();
+};
+
+function showQuestion(){
+  if(quizIdx>=quizQs.length){endQuiz();return;}
+  const q=quizQs[quizIdx];
+  quizAnswered=false;
+  document.getElementById('quiz-question').textContent=q.q;
+  document.getElementById('quiz-qnum').textContent=`${quizIdx+1}/10`;
+  document.getElementById('quiz-score').textContent=quizScore;
+  document.getElementById('quiz-feedback').style.display='none';
+  document.getElementById('quiz-options').innerHTML=q.opts.map((opt,i)=>`
+    <button onclick="answerQ(${i})" style="background:rgba(0,0,0,0.2);border:1px solid var(--gb);border-radius:10px;padding:12px 16px;color:var(--t1);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;text-align:left;transition:all 0.2s;width:100%" onmouseover="if(!this.disabled)this.style.borderColor='var(--a2)'" onmouseout="if(!this.disabled)this.style.borderColor='var(--gb)'">${String.fromCharCode(65+i)}. ${opt}</button>
+  `).join('');
+  startTimer();
+}
+
+function startTimer(){
+  clearInterval(quizTimer);quizTimeLeft=15;
+  document.getElementById('quiz-timer').textContent=quizTimeLeft;
+  document.getElementById('quiz-timer').style.color='var(--a3)';
+  quizTimer=setInterval(()=>{
+    quizTimeLeft--;
+    document.getElementById('quiz-timer').textContent=quizTimeLeft;
+    if(quizTimeLeft<=5)document.getElementById('quiz-timer').style.color='var(--err)';
+    if(quizTimeLeft<=0){clearInterval(quizTimer);if(!quizAnswered)timeOut();}
+  },1000);
+}
+
+window.answerQ=i=>{
+  if(quizAnswered)return;
+  quizAnswered=true;clearInterval(quizTimer);
+  const q=quizQs[quizIdx];
+  const btns=document.querySelectorAll('#quiz-options button');
+  btns.forEach((b,idx)=>{b.disabled=true;if(idx===q.ans)b.style.background='rgba(52,211,153,0.2)';});
+  const fb=document.getElementById('quiz-feedback');
+  if(i===q.ans){
+    quizScore++;
+    btns[i].style.background='rgba(52,211,153,0.2)';btns[i].style.borderColor='var(--ok)';
+    fb.style.display='block';fb.style.background='rgba(52,211,153,0.1)';fb.style.color='var(--ok)';fb.textContent='✅ Correct! Well done!';
+  }else{
+    btns[i].style.background='rgba(248,113,113,0.2)';btns[i].style.borderColor='var(--err)';
+    fb.style.display='block';fb.style.background='rgba(248,113,113,0.1)';fb.style.color='var(--err)';fb.textContent=`❌ Wrong! Answer was: ${q.opts[q.ans]}`;
+  }
+  document.getElementById('quiz-score').textContent=quizScore;
+  setTimeout(()=>{quizIdx++;showQuestion();},1800);
+};
+
+function timeOut(){
+  quizAnswered=true;
+  const q=quizQs[quizIdx];
+  const btns=document.querySelectorAll('#quiz-options button');
+  btns.forEach((b,idx)=>{b.disabled=true;if(idx===q.ans)b.style.background='rgba(52,211,153,0.2)';});
+  const fb=document.getElementById('quiz-feedback');
+  fb.style.display='block';fb.style.background='rgba(251,191,36,0.1)';fb.style.color='var(--warn)';fb.textContent=`⏰ Time's up! Answer was: ${q.opts[q.ans]}`;
+  setTimeout(()=>{quizIdx++;showQuestion();},1800);
+}
+
+function endQuiz(){
+  clearInterval(quizTimer);
+  document.getElementById('quiz-area').style.display='none';
+  document.getElementById('quiz-result').style.display='block';
+  const pct=Math.round(quizScore/10*100);
+  const emoji=pct>=90?'🏆':pct>=70?'🎉':pct>=50?'😊':'💪';
+  const title=pct>=90?'Perfect Score!':pct>=70?'Great Job!':pct>=50?'Good Try!':'Keep Practising!';
+  const msg=pct>=90?'You got everything right! You are a genius! 🧠':pct>=70?'Really impressive knowledge!':pct>=50?'More than half right — well done!':'Every attempt makes you smarter!';
+  document.getElementById('result-emoji').textContent=emoji;
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-score').textContent=`You scored ${quizScore}/10 (${pct}%)`;
+  document.getElementById('result-msg').textContent=msg;
+  if(pct>=70)launchConfetti();
+}
   try{
     emailjs.init({publicKey:'V9NqLDtVaGzB173ee'});
     emailjs.send('service_k84ebeh','template_232ecf8',{message:msg})
@@ -1637,7 +1942,7 @@ window.lockWA=()=>{document.getElementById('wal2').style.display='block';documen
 window.goTab=(tab,btn)=>{['pt','ph3','pn','pbills','penergy'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});const map={tasks:'pt',habits:'ph3',notes:'pn',bills:'pbills',energy:'penergy'};const el=document.getElementById(map[tab]);if(el)el.style.display='block';document.querySelectorAll('.it').forEach(b=>b.classList.remove('on'));btn.classList.add('on');};
 window.goPg=(pg,btn)=>{document.querySelectorAll('#db-parent .pg').forEach(p=>p.classList.remove('on'));const el=document.getElementById('pg-'+pg);if(el)el.classList.add('on');document.querySelectorAll('#db-parent .ntab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');if(pg!=='family')lockPC();if(pg==='mood-parent'){renderMoodCalendars();renderMoodChart();renderMoodEntries();renderMoodSummary();}};
 window.goFamTab=(tab,btn)=>{['ft-tasks','ft-photos','ft-grocery','ft-goals'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display='none';});const el=document.getElementById('ft-'+tab);if(el)el.style.display='block';document.querySelectorAll('#pg-family .it-bar .it').forEach(b=>b.classList.remove('on'));btn.classList.add('on');};
-window.goKidPg=(pg,btn)=>{document.querySelectorAll('#db-kid .pg').forEach(p=>{p.classList.remove('on');p.style.display='none';});const el=document.getElementById('kpg-'+pg);if(el){el.classList.add('on');el.style.display='block';}document.querySelectorAll('#db-kid .ntab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');};
+window.goKidPg=(pg,btn)=>{document.querySelectorAll('#db-kid .pg').forEach(p=>{p.classList.remove('on');p.style.display='none';});const el=document.getElementById('kpg-'+pg);if(el){el.classList.add('on');el.style.display='block';}document.querySelectorAll('#db-kid .ntab').forEach(b=>b.classList.remove('on'));btn.classList.add('on');if(pg==='game')checkGameUnlock();};
 
 // MODAL HELPERS
 window.openMo=id=>document.getElementById(id).classList.add('on');
